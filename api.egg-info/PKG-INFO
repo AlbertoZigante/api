@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: api
+Version: 0.1.0
+Summary: Backend for the DIY furniture platform: BOM, nesting, catalog
+Requires-Python: >=3.11
+Requires-Dist: fastapi>=0.115
+Requires-Dist: uvicorn[standard]>=0.30
+Requires-Dist: pydantic-settings>=2.4
+Provides-Extra: dev
+Requires-Dist: pytest>=8; extra == "dev"
+Requires-Dist: httpx>=0.27; extra == "dev"
