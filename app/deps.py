@@ -1,6 +1,7 @@
-from fastapi import Depends, Header, HTTPException, Request
+from fastapi import Depends, Header, Request
 
 from .config import Settings, get_settings
+from .errors import ApiError
 from .schemas.catalog import Material
 
 
@@ -14,4 +15,4 @@ def require_api_key(
 ) -> None:
     keys = settings.api_key_set
     if keys and x_api_key not in keys:
-        raise HTTPException(status_code=401, detail="Invalid or missing API key")
+        raise ApiError(401, "invalid_api_key", "Invalid or missing API key")

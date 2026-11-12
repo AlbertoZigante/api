@@ -40,3 +40,15 @@ Dockerfile             container deploy (reads $PORT)
 ## Deploy
 Any container host (Fly.io, Render, Cloud Run): build the `Dockerfile`, set env vars from `.env.example`
 (`CORS_ORIGINS` = site + modeller origins, `API_KEYS` for beta). Custom domain e.g. `api.<domain>`.
+
+
+## Languages (en / fr / it)
+
+The API is deliberately **locale-neutral**: it never translates. Clients (site, 3D modeller) translate.
+
+- Every error body is `{ "detail": <English text>, "code": <stable code> }` — codes: `invalid_api_key`,
+  `validation_error`, `invalid_input`. Translate by `code`.
+- BOM rows keep the English `label` / `assembly` (stable: used for sorting and nesting ids) and add
+  `assemblyKind` (`none | box | drawer | group`) and `assemblyIndex` so clients can render
+  "Tiroir 2" / "Cassetto 2" themselves. Use `bandedEdges` (not `bandedEdgesLabel`) to localise edge letters.
+- Material names come from the catalog (`app/catalog/data/materials.csv`) and are shown as-is.

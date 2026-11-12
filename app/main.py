@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .catalog.loader import load_materials
 from .config import get_settings
+from .errors import install_error_handlers
 from .routers import bom, catalog, health, nesting
 
 
@@ -23,6 +24,7 @@ def create_app() -> FastAPI:
         allow_methods=["GET", "POST"],
         allow_headers=["Content-Type", "X-API-Key"],
     )
+    install_error_handlers(app)
     for r in (health.router, catalog.router, bom.router, nesting.router):
         app.include_router(r)
     return app

@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import ConfigDict
 
 from .base import CamelModel
@@ -35,6 +37,9 @@ class BomRow(CamelModel):
     piece_names: list[str]
     piece_codes: list[str | None]
     assembly: str
+    # Locale-neutral twin of `assembly` (clients translate the kind, e.g. "Drawer" + 2).
+    assembly_kind: Literal["none", "box", "drawer", "group"] = "none"
+    assembly_index: int | None = None
     width_mm: float
     height_mm: float
     thickness_mm: float
