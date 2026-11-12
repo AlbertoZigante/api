@@ -1,0 +1,20 @@
+[
+  {
+    "bandedEdges": [],
+    "boxGroupId": null,
+    "groupId": null,
+    "height": 100,
+    "id": "panel-1",
+    "isBoxPanel": false,
+    "isDoor": false,
+    "isDrawerBoxPanel": false,
+    "isDrawerFront": false,
+    "isLeg": false,
+    "isPlinthPanel": false,
+    "material": "Melamine White 18mm",
+    "name": "Floating",
+    "pieceCode": null,
+    "thickness": 18,
+    "width": 100
+  }
+]

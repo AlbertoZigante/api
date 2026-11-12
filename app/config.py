@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     env: str = "development"
     cors_origins: str = "http://localhost:5173,http://localhost:4321"
     api_keys: str = ""  # empty = auth disabled
+    max_body_bytes: int = 2_000_000  # request body cap (413 above)
 
     @property
     def cors_list(self) -> list[str]:

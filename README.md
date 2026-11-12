@@ -21,8 +21,29 @@ Docs: http://localhost:8000/docs
 | GET | `/v1/catalog/materials` | material catalog (replaces `public/data/materials.csv`) |
 | POST | `/v1/bom` | `{panels:[resolved panels]}` → `{rows, materialSummary}` |
 | POST | `/v1/nesting` | `{panels, options}` → `{bom, results, summary}` |
+| GET | `/v1/version` | `{apiVersion, rulesVersion, contractVersion}` |
+| POST | `/v1/joints` | RAW `{panels}` → joints + collisions + feature joints (**501: contract only**) |
+| POST | `/v1/hardware-plan` | RAW `{panels}` → hinges / runners / fasteners (**501: contract only**) |
+| POST | `/v1/assembly` | RAW `{panels}` → ordered steps + clusters + tools (**501: contract only**) |
+
+Every response carries `X-Rules-Version`. Errors are always `{"code": "<stable>", "detail": ...}`
+(`invalid_api_key` 401, `validation_error` 422, `payload_too_large` 413, `not_implemented` 501).
 
 JSON is camelCase on the wire (same field names as the modeller).
+
+## Contract & trust boundary
+- Request bodies are validated and bounded (`app/schemas/limits.py`: max 500 panels, dimensions, coordinates,
+  string lengths; body cap `MAX_BODY_BYTES`). NaN/Infinity rejected, duplicate ids and dangling constraints rejected.
+- The rules chain takes the RAW panel graph (`app/schemas/panels.py`) and resolves it server-side; client-supplied
+  joints/relations/positions are dropped, never trusted.
+- `openapi.json` is the committed contract. After ANY schema/route change:
+  `python scripts/export_openapi.py` and commit it (CI + `tests/test_openapi_snapshot.py` fail otherwise).
+  The modeller generates its TS types from it (`npm run api:types` in 3d_modeler).
+- Quality gates: `ruff check .`, `mypy`, `pytest`.
+
+## Golden fixtures
+`tests/golden/<design>/` = frozen output of the original JS engine (from `3d_modeler/fixtures/golden`) + BOM/nesting
+baselines. Refresh with `python scripts/dump_golden.py ..\3d_modeler\fixtures\golden`.
 
 ## Structure
 ```
@@ -31,7 +52,11 @@ app/config.py          env settings
 app/deps.py            catalog + optional X-API-Key auth
 app/routers/           health, catalog, bom, nesting
 app/services/          bom.py, nesting.py  (ports of engine/bom.js, engine/nesting.js)
-app/schemas/           pydantic models
+app/schemas/           pydantic models (panels.py = raw request, engine.py = rules-chain responses, limits.py)
+app/rules/             RULES_VERSION / CONTRACT_VERSION (rules themselves land here in phases 8-9)
+app/errors.py          error envelope + handlers
+app/middleware.py      body-size limit (413), X-Rules-Version header
+scripts/               dump_golden.py, export_openapi.py
 app/catalog/           loader.py + data/materials.csv
 tests/                 pytest (nesting verified identical to the JS reference)
 Dockerfile             container deploy (reads $PORT)
@@ -40,15 +65,3 @@ Dockerfile             container deploy (reads $PORT)
 ## Deploy
 Any container host (Fly.io, Render, Cloud Run): build the `Dockerfile`, set env vars from `.env.example`
 (`CORS_ORIGINS` = site + modeller origins, `API_KEYS` for beta). Custom domain e.g. `api.<domain>`.
-
-
-## Languages (en / fr / it)
-
-The API is deliberately **locale-neutral**: it never translates. Clients (site, 3D modeller) translate.
-
-- Every error body is `{ "detail": <English text>, "code": <stable code> }` — codes: `invalid_api_key`,
-  `validation_error`, `invalid_input`. Translate by `code`.
-- BOM rows keep the English `label` / `assembly` (stable: used for sorting and nesting ids) and add
-  `assemblyKind` (`none | box | drawer | group`) and `assemblyIndex` so clients can render
-  "Tiroir 2" / "Cassetto 2" themselves. Use `bandedEdges` (not `bandedEdgesLabel`) to localise edge letters.
-- Material names come from the catalog (`app/catalog/data/materials.csv`) and are shown as-is.

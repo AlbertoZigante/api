@@ -137,7 +137,8 @@ def nest_pieces(pieces, stock, kerf=DEFAULT_KERF_MM):
         pieces,
         key=lambda p: (-max(p["widthMm"], p["heightMm"]), -min(p["widthMm"], p["heightMm"])),
     )
-    sheets, unplaced = [], []
+    sheets: list[dict] = []
+    unplaced: list[dict] = []
 
     for piece in ordered:
         if not _fits_as_given(piece, sw, sh) and not _fits_rotated(piece, sw, sh):

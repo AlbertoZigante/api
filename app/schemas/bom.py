@@ -1,8 +1,13 @@
-from typing import Literal
+from typing import Annotated
 
-from pydantic import ConfigDict
+from pydantic import ConfigDict, Field
 
 from .base import CamelModel
+from .limits import MAX_DIM_MM, MAX_LIST, MAX_PANELS, MAX_STR, MAX_THICKNESS_MM
+
+ShortStr = Annotated[str, Field(max_length=MAX_STR)]
+Dim = Annotated[float, Field(gt=0, le=MAX_DIM_MM)]
+Thickness = Annotated[float, Field(gt=0, le=MAX_THICKNESS_MM)]
 
 
 class Panel(CamelModel):
@@ -10,16 +15,16 @@ class Panel(CamelModel):
 
     model_config = CamelModel.model_config | ConfigDict(extra="ignore")
 
-    id: str
-    name: str | None = None
-    piece_code: str | None = None
-    width: float
-    height: float
-    thickness: float
-    material: str
-    banded_edges: list[str] = []
-    group_id: str | None = None
-    box_group_id: str | None = None
+    id: ShortStr
+    name: ShortStr | None = None
+    piece_code: ShortStr | None = None
+    width: Dim
+    height: Dim
+    thickness: Thickness
+    material: ShortStr
+    banded_edges: Annotated[list[ShortStr], Field(max_length=MAX_LIST)] = []
+    group_id: ShortStr | None = None
+    box_group_id: ShortStr | None = None
     is_door: bool = False
     is_plinth_panel: bool = False
     is_leg: bool = False
@@ -29,7 +34,7 @@ class Panel(CamelModel):
 
 
 class BomRequest(CamelModel):
-    panels: list[Panel]
+    panels: Annotated[list[Panel], Field(max_length=MAX_PANELS)]
 
 
 class BomRow(CamelModel):
@@ -37,9 +42,6 @@ class BomRow(CamelModel):
     piece_names: list[str]
     piece_codes: list[str | None]
     assembly: str
-    # Locale-neutral twin of `assembly` (clients translate the kind, e.g. "Drawer" + 2).
-    assembly_kind: Literal["none", "box", "drawer", "group"] = "none"
-    assembly_index: int | None = None
     width_mm: float
     height_mm: float
     thickness_mm: float
