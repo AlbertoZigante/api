@@ -449,6 +449,27 @@
             "title": "Assembly",
             "type": "string"
           },
+          "assemblyIndex": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assemblyindex"
+          },
+          "assemblyKind": {
+            "enum": [
+              "box",
+              "drawer",
+              "group",
+              "none"
+            ],
+            "title": "Assemblykind",
+            "type": "string"
+          },
           "bandedEdges": {
             "items": {
               "type": "string"
@@ -548,7 +569,9 @@
           "isHardware",
           "areaM2",
           "bandingLengthM",
-          "bandingCost"
+          "bandingCost",
+          "assemblyKind",
+          "assemblyIndex"
         ],
         "title": "BomRow",
         "type": "object"
@@ -2921,6 +2944,9 @@
               }
             },
             "description": "Successful Response"
+          },
+          "304": {
+            "description": "Not modified (If-None-Match matched the ETag)"
           },
           "401": {
             "content": {

@@ -1,7 +1,558 @@
 {
   "body": {
-    "code": "invalid_api_key",
-    "detail": "Invalid or missing API key"
+    "bom": {
+      "materialSummary": [
+        {
+          "areaM2": 2.763407999999999,
+          "material": "Melamine White 18mm",
+          "quantity": 20,
+          "thickness": 18.0
+        }
+      ],
+      "rows": [
+        {
+          "areaM2": 0.368,
+          "assembly": "Group 1",
+          "assemblyIndex": 1,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 736.0,
+          "isHardware": false,
+          "label": "Group 1 — Back",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null
+          ],
+          "pieceNames": [
+            "Back"
+          ],
+          "quantity": 1,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.368,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 500.0
+        },
+        {
+          "areaM2": 0.19999999999999998,
+          "assembly": "Group 1",
+          "assemblyIndex": 1,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 400.0,
+          "isHardware": false,
+          "label": "Group 1 — Bottom",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null
+          ],
+          "pieceNames": [
+            "Bottom"
+          ],
+          "quantity": 1,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.19999999999999998,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 500.0
+        },
+        {
+          "areaM2": 0.5599999999999999,
+          "assembly": "Group 1",
+          "assemblyIndex": 1,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 700.0,
+          "isHardware": false,
+          "label": "Group 1 — Left/Right",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null,
+            null
+          ],
+          "pieceNames": [
+            "Left",
+            "Right"
+          ],
+          "quantity": 2,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.27999999999999997,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 400.0
+        },
+        {
+          "areaM2": 0.209,
+          "assembly": "Group 1",
+          "assemblyIndex": 1,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 418.0,
+          "isHardware": false,
+          "label": "Group 1 — Top",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null
+          ],
+          "pieceNames": [
+            "Top"
+          ],
+          "quantity": 1,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.209,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 500.0
+        },
+        {
+          "areaM2": 0.22542399999999999,
+          "assembly": "Group 2",
+          "assemblyIndex": 2,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 292.0,
+          "isHardware": false,
+          "label": "Group 2 — Drawer Back",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null,
+            null
+          ],
+          "pieceNames": [
+            "Drawer Back",
+            "Drawer Back"
+          ],
+          "quantity": 2,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.11271199999999999,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 386.0
+        },
+        {
+          "areaM2": 0.279464,
+          "assembly": "Group 2",
+          "assemblyIndex": 2,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 362.0,
+          "isHardware": false,
+          "label": "Group 2 — Drawer Bottom",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null,
+            null
+          ],
+          "pieceNames": [
+            "Drawer Bottom",
+            "Drawer Bottom"
+          ],
+          "quantity": 2,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.139732,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 386.0
+        },
+        {
+          "areaM2": 0.3248,
+          "assembly": "Group 2",
+          "assemblyIndex": 2,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 350.0,
+          "isHardware": false,
+          "label": "Group 2 — Drawer Front 1/Drawer Front 2",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null,
+            null
+          ],
+          "pieceNames": [
+            "Drawer Front 1",
+            "Drawer Front 2"
+          ],
+          "quantity": 2,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.1624,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 464.0
+        },
+        {
+          "areaM2": 0.47119999999999995,
+          "assembly": "Group 2",
+          "assemblyIndex": 2,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 310.0,
+          "isHardware": false,
+          "label": "Group 2 — Drawer Left/Drawer Right",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "pieceNames": [
+            "Drawer Left",
+            "Drawer Right",
+            "Drawer Left",
+            "Drawer Right"
+          ],
+          "quantity": 4,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.11779999999999999,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 380.0
+        },
+        {
+          "areaM2": 0.06,
+          "assembly": "Group 3",
+          "assemblyIndex": 3,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 60.0,
+          "isHardware": false,
+          "label": "Group 3 — Plinth Back/Plinth Front",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null,
+            null
+          ],
+          "pieceNames": [
+            "Plinth Back",
+            "Plinth Front"
+          ],
+          "quantity": 2,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.03,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 500.0
+        },
+        {
+          "areaM2": 0.06552,
+          "assembly": "Group 3",
+          "assemblyIndex": 3,
+          "assemblyKind": "group",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 60.0,
+          "isHardware": false,
+          "label": "Group 3 — Plinth Left/Plinth Right/Plinth Rib y-1-1",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null,
+            null,
+            null
+          ],
+          "pieceNames": [
+            "Plinth Left",
+            "Plinth Right",
+            "Plinth Rib y-1-1"
+          ],
+          "quantity": 3,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.02184,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 364.0
+        }
+      ]
+    },
+    "results": [
+      {
+        "material": "Melamine White 18mm",
+        "sheets": [
+          {
+            "heightMm": 1220.0,
+            "placements": [
+              {
+                "finishedHeightMm": 736.0,
+                "finishedWidthMm": 500.0,
+                "heightMm": 736.0,
+                "pieceId": "Group 1 — Back#1",
+                "rotated": false,
+                "widthMm": 500.0,
+                "xMm": 0.0,
+                "yMm": 0.0
+              },
+              {
+                "finishedHeightMm": 700.0,
+                "finishedWidthMm": 400.0,
+                "heightMm": 700.0,
+                "pieceId": "Group 1 — Left/Right#1",
+                "rotated": false,
+                "widthMm": 400.0,
+                "xMm": 503.0,
+                "yMm": 0.0
+              },
+              {
+                "finishedHeightMm": 700.0,
+                "finishedWidthMm": 400.0,
+                "heightMm": 700.0,
+                "pieceId": "Group 1 — Left/Right#2",
+                "rotated": false,
+                "widthMm": 400.0,
+                "xMm": 906.0,
+                "yMm": 0.0
+              },
+              {
+                "finishedHeightMm": 418.0,
+                "finishedWidthMm": 500.0,
+                "heightMm": 418.0,
+                "pieceId": "Group 1 — Top#1",
+                "rotated": false,
+                "widthMm": 500.0,
+                "xMm": 0.0,
+                "yMm": 739.0
+              },
+              {
+                "finishedHeightMm": 500.0,
+                "finishedWidthMm": 400.0,
+                "heightMm": 500.0,
+                "pieceId": "Group 1 — Bottom#1",
+                "rotated": true,
+                "widthMm": 400.0,
+                "xMm": 503.0,
+                "yMm": 703.0
+              },
+              {
+                "finishedHeightMm": 60.0,
+                "finishedWidthMm": 500.0,
+                "heightMm": 60.0,
+                "pieceId": "Group 3 — Plinth Back/Plinth Front#1",
+                "rotated": false,
+                "widthMm": 500.0,
+                "xMm": 0.0,
+                "yMm": 1160.0
+              },
+              {
+                "finishedHeightMm": 500.0,
+                "finishedWidthMm": 60.0,
+                "heightMm": 500.0,
+                "pieceId": "Group 3 — Plinth Back/Plinth Front#2",
+                "rotated": true,
+                "widthMm": 60.0,
+                "xMm": 906.0,
+                "yMm": 703.0
+              },
+              {
+                "finishedHeightMm": 350.0,
+                "finishedWidthMm": 464.0,
+                "heightMm": 350.0,
+                "pieceId": "Group 2 — Drawer Front 1/Drawer Front 2#1",
+                "rotated": false,
+                "widthMm": 464.0,
+                "xMm": 1309.0,
+                "yMm": 0.0
+              },
+              {
+                "finishedHeightMm": 350.0,
+                "finishedWidthMm": 464.0,
+                "heightMm": 350.0,
+                "pieceId": "Group 2 — Drawer Front 1/Drawer Front 2#2",
+                "rotated": false,
+                "widthMm": 464.0,
+                "xMm": 1776.0,
+                "yMm": 0.0
+              },
+              {
+                "finishedHeightMm": 386.0,
+                "finishedWidthMm": 362.0,
+                "heightMm": 386.0,
+                "pieceId": "Group 2 — Drawer Bottom#1",
+                "rotated": true,
+                "widthMm": 362.0,
+                "xMm": 1309.0,
+                "yMm": 353.0
+              },
+              {
+                "finishedHeightMm": 386.0,
+                "finishedWidthMm": 362.0,
+                "heightMm": 386.0,
+                "pieceId": "Group 2 — Drawer Bottom#2",
+                "rotated": true,
+                "widthMm": 362.0,
+                "xMm": 1309.0,
+                "yMm": 742.0
+              },
+              {
+                "finishedHeightMm": 386.0,
+                "finishedWidthMm": 292.0,
+                "heightMm": 386.0,
+                "pieceId": "Group 2 — Drawer Back#1",
+                "rotated": true,
+                "widthMm": 292.0,
+                "xMm": 969.0,
+                "yMm": 703.0
+              },
+              {
+                "finishedHeightMm": 292.0,
+                "finishedWidthMm": 386.0,
+                "heightMm": 292.0,
+                "pieceId": "Group 2 — Drawer Back#2",
+                "rotated": false,
+                "widthMm": 386.0,
+                "xMm": 1674.0,
+                "yMm": 353.0
+              },
+              {
+                "finishedHeightMm": 380.0,
+                "finishedWidthMm": 310.0,
+                "heightMm": 380.0,
+                "pieceId": "Group 2 — Drawer Left/Drawer Right#1",
+                "rotated": true,
+                "widthMm": 310.0,
+                "xMm": 1674.0,
+                "yMm": 648.0
+              },
+              {
+                "finishedHeightMm": 310.0,
+                "finishedWidthMm": 380.0,
+                "heightMm": 310.0,
+                "pieceId": "Group 2 — Drawer Left/Drawer Right#2",
+                "rotated": false,
+                "widthMm": 380.0,
+                "xMm": 1987.0,
+                "yMm": 648.0
+              },
+              {
+                "finishedHeightMm": 60.0,
+                "finishedWidthMm": 364.0,
+                "heightMm": 60.0,
+                "pieceId": "Group 3 — Plinth Left/Plinth Right/Plinth Rib y-1-1#1",
+                "rotated": false,
+                "widthMm": 364.0,
+                "xMm": 2063.0,
+                "yMm": 353.0
+              },
+              {
+                "finishedHeightMm": 60.0,
+                "finishedWidthMm": 364.0,
+                "heightMm": 60.0,
+                "pieceId": "Group 3 — Plinth Left/Plinth Right/Plinth Rib y-1-1#2",
+                "rotated": false,
+                "widthMm": 364.0,
+                "xMm": 2063.0,
+                "yMm": 416.0
+              },
+              {
+                "finishedHeightMm": 60.0,
+                "finishedWidthMm": 364.0,
+                "heightMm": 60.0,
+                "pieceId": "Group 3 — Plinth Left/Plinth Right/Plinth Rib y-1-1#3",
+                "rotated": false,
+                "widthMm": 364.0,
+                "xMm": 2063.0,
+                "yMm": 479.0
+              }
+            ],
+            "sheetIndex": 0,
+            "totalAreaM2": 2.9768,
+            "usedAreaM2": 2.527808,
+            "utilization": 0.8491695780704112,
+            "widthMm": 2440.0
+          },
+          {
+            "heightMm": 1220.0,
+            "placements": [
+              {
+                "finishedHeightMm": 380.0,
+                "finishedWidthMm": 310.0,
+                "heightMm": 380.0,
+                "pieceId": "Group 2 — Drawer Left/Drawer Right#3",
+                "rotated": true,
+                "widthMm": 310.0,
+                "xMm": 0.0,
+                "yMm": 0.0
+              },
+              {
+                "finishedHeightMm": 380.0,
+                "finishedWidthMm": 310.0,
+                "heightMm": 380.0,
+                "pieceId": "Group 2 — Drawer Left/Drawer Right#4",
+                "rotated": true,
+                "widthMm": 310.0,
+                "xMm": 0.0,
+                "yMm": 383.0
+              }
+            ],
+            "sheetIndex": 1,
+            "totalAreaM2": 2.9768,
+            "usedAreaM2": 0.2356,
+            "utilization": 0.07914539102391831,
+            "widthMm": 2440.0
+          }
+        ],
+        "stockSheet": {
+          "heightMm": 1220.0,
+          "widthMm": 2440.0
+        },
+        "thicknessMm": 18.0,
+        "unplaced": []
+      }
+    ],
+    "summary": {
+      "perMaterial": [
+        {
+          "material": "Melamine White 18mm",
+          "pricePerSheet": 45.0,
+          "sheetsUsed": 2,
+          "thicknessMm": 18.0,
+          "totalAreaM2": 5.9536,
+          "totalCost": 90.0,
+          "unplacedAreaM2": 0.0,
+          "unplacedCount": 0,
+          "unplacedLabels": [],
+          "usedAreaM2": 2.7634079999999996,
+          "utilization": 0.4641574845471647,
+          "wasteAreaM2": 3.190192
+        }
+      ],
+      "totals": {
+        "sheetsUsed": 2,
+        "totalAreaM2": 5.9536,
+        "totalCost": 90.0,
+        "unplacedAreaM2": 0.0,
+        "unplacedCount": 0,
+        "usedAreaM2": 2.7634079999999996,
+        "utilization": 0.4641574845471647,
+        "wasteAreaM2": 3.190192
+      }
+    }
   },
-  "status": 401
+  "status": 200
 }

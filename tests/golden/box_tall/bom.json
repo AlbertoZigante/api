@@ -1,7 +1,121 @@
 {
   "body": {
-    "code": "invalid_api_key",
-    "detail": "Invalid or missing API key"
+    "materialSummary": [
+      {
+        "areaM2": 2.767,
+        "material": "Melamine White 18mm",
+        "quantity": 5,
+        "thickness": 18.0
+      }
+    ],
+    "rows": [
+      {
+        "areaM2": 0.9179999999999999,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 1836.0,
+        "isHardware": false,
+        "label": "Group 1 — Back",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Back"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.9179999999999999,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 500.0
+      },
+      {
+        "areaM2": 0.19999999999999998,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 400.0,
+        "isHardware": false,
+        "label": "Group 1 — Bottom",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Bottom"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.19999999999999998,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 500.0
+      },
+      {
+        "areaM2": 1.44,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 1800.0,
+        "isHardware": false,
+        "label": "Group 1 — Left/Right",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null,
+          null
+        ],
+        "pieceNames": [
+          "Left",
+          "Right"
+        ],
+        "quantity": 2,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.72,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 400.0
+      },
+      {
+        "areaM2": 0.209,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 418.0,
+        "isHardware": false,
+        "label": "Group 1 — Top",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Top"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.209,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 500.0
+      }
+    ]
   },
-  "status": 401
+  "status": 200
 }

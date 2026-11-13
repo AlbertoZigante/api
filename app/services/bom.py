@@ -46,7 +46,7 @@ def _label_key(p: Panel) -> str | None:
 
 
 def _group_labels(panels: list[Panel]) -> dict[str, str]:
-    labels: dict[str, str] = {}
+    labels: dict[str, tuple[str, str, int]] = {}
     box = group = drawer = 0
     for p in panels:
         key = _label_key(p)
@@ -54,13 +54,13 @@ def _group_labels(panels: list[Panel]) -> dict[str, str]:
             continue
         if p.is_drawer_front or p.is_drawer_box_panel:
             drawer += 1
-            labels[key] = f"Drawer {drawer}"
+            labels[key] = (f"Drawer {drawer}", "drawer", drawer)
         elif p.is_box_panel:
             box += 1
-            labels[key] = f"Box {box}"
+            labels[key] = (f"Box {box}", "box", box)
         else:
             group += 1
-            labels[key] = f"Group {group}"
+            labels[key] = (f"Group {group}", "group", group)
     return labels
 
 
@@ -73,7 +73,10 @@ def compute_bom(panels: list[Panel], catalog: list[Material]) -> list[BomRow]:
     rows: dict[str, dict] = {}
 
     for p in panels:
-        assembly = "—" if not p.group_id else labels.get(_label_key(p) or "", "Group")
+        if not p.group_id:
+            assembly, kind, index = "—", "none", None
+        else:
+            assembly, kind, index = labels.get(_label_key(p) or "", ("Group", "group", None))
         key = f"{assembly}::{_footprint_key(catalog, p)}"
         name = _display_name(p)
         row = rows.get(key)
@@ -83,6 +86,8 @@ def compute_bom(panels: list[Panel], catalog: list[Material]) -> list[BomRow]:
                 "piece_names": [name],
                 "piece_codes": [p.piece_code],
                 "assembly": assembly,
+                "assembly_kind": kind,
+                "assembly_index": index,
                 "width_mm": p.width,
                 "height_mm": p.height,
                 "thickness_mm": p.thickness,

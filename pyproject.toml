@@ -29,6 +29,7 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Header"]  # FastAPI depend
 
 [tool.ruff.lint.per-file-ignores]
 "app/services/*" = ["E501"]  # direct ports of the JS engine: keep lines comparable to the original
+"tests/*" = ["E501"]  # long literal fixtures / one-line assertions
 
 [tool.mypy]
 python_version = "3.11"

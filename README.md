@@ -41,7 +41,13 @@ JSON is camelCase on the wire (same field names as the modeller).
   The modeller generates its TS types from it (`npm run api:types` in 3d_modeler).
 - Quality gates: `ruff check .`, `mypy`, `pytest`.
 
-## Golden fixtures
+## Golden fixtures + parity with the original JS engine
+`tests/test_golden.py` runs every (stage x design) of the frozen goldens (`tests/golden_harness.py`):
+BOM and nesting must equal the ORIGINAL JS engine's output (`legacyBom/legacyNesting.json`, produced by the modeller's
+`npm run golden:legacy` from the pre-migration code). Stages not ported yet (joints, hardware, assembly, resolve) are
+strict xfails: when a port starts passing, flip `ported=True` in the harness. The run prints a per-stage report.
+
+`GET /v1/catalog/materials` sends an `ETag` + `Cache-Control: no-cache`; `If-None-Match` -> 304.
 `tests/golden/<design>/` = frozen output of the original JS engine (from `3d_modeler/fixtures/golden`) + BOM/nesting
 baselines. Refresh with `python scripts/dump_golden.py ..\3d_modeler\fixtures\golden`.
 

@@ -88,23 +88,5 @@
     "pieceCode": null,
     "thickness": 18,
     "width": 500
-  },
-  {
-    "bandedEdges": [],
-    "boxGroupId": null,
-    "groupId": "panel-1",
-    "height": 1818,
-    "id": "panel-6",
-    "isBoxPanel": false,
-    "isDoor": false,
-    "isDrawerBoxPanel": false,
-    "isDrawerFront": false,
-    "isLeg": false,
-    "isPlinthPanel": false,
-    "material": "Melamine White 18mm",
-    "name": "Front",
-    "pieceCode": null,
-    "thickness": 18,
-    "width": 500
   }
 ]

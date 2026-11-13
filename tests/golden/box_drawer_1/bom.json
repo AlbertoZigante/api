@@ -1,7 +1,227 @@
 {
   "body": {
-    "code": "invalid_api_key",
-    "detail": "Invalid or missing API key"
+    "materialSummary": [
+      {
+        "areaM2": 2.550944,
+        "material": "Melamine White 18mm",
+        "quantity": 10,
+        "thickness": 18.0
+      }
+    ],
+    "rows": [
+      {
+        "areaM2": 0.368,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 736.0,
+        "isHardware": false,
+        "label": "Group 1 — Back",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Back"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.368,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 500.0
+      },
+      {
+        "areaM2": 0.19999999999999998,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 400.0,
+        "isHardware": false,
+        "label": "Group 1 — Bottom",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Bottom"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.19999999999999998,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 500.0
+      },
+      {
+        "areaM2": 0.5599999999999999,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 700.0,
+        "isHardware": false,
+        "label": "Group 1 — Left/Right",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null,
+          null
+        ],
+        "pieceNames": [
+          "Left",
+          "Right"
+        ],
+        "quantity": 2,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.27999999999999997,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 400.0
+      },
+      {
+        "areaM2": 0.209,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 418.0,
+        "isHardware": false,
+        "label": "Group 1 — Top",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Top"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.209,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 500.0
+      },
+      {
+        "areaM2": 0.24781199999999998,
+        "assembly": "Group 2",
+        "assemblyIndex": 2,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 642.0,
+        "isHardware": false,
+        "label": "Group 2 — Drawer Back",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Drawer Back"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.24781199999999998,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 386.0
+      },
+      {
+        "areaM2": 0.139732,
+        "assembly": "Group 2",
+        "assemblyIndex": 2,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 362.0,
+        "isHardware": false,
+        "label": "Group 2 — Drawer Bottom",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Drawer Bottom"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.139732,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 386.0
+      },
+      {
+        "areaM2": 0.3248,
+        "assembly": "Group 2",
+        "assemblyIndex": 2,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 700.0,
+        "isHardware": false,
+        "label": "Group 2 — Drawer Front",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Drawer Front"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.3248,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 464.0
+      },
+      {
+        "areaM2": 0.5015999999999999,
+        "assembly": "Group 2",
+        "assemblyIndex": 2,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 660.0,
+        "isHardware": false,
+        "label": "Group 2 — Drawer Left/Drawer Right",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null,
+          null
+        ],
+        "pieceNames": [
+          "Drawer Left",
+          "Drawer Right"
+        ],
+        "quantity": 2,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.25079999999999997,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 380.0
+      }
+    ]
   },
-  "status": 401
+  "status": 200
 }

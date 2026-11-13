@@ -1,7 +1,104 @@
 {
   "body": {
-    "code": "invalid_api_key",
-    "detail": "Invalid or missing API key"
+    "bom": {
+      "materialSummary": [
+        {
+          "areaM2": 0.01,
+          "material": "Melamine White 18mm",
+          "quantity": 1,
+          "thickness": 18.0
+        }
+      ],
+      "rows": [
+        {
+          "areaM2": 0.01,
+          "assembly": "—",
+          "assemblyIndex": null,
+          "assemblyKind": "none",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 100.0,
+          "isHardware": false,
+          "label": "Floating",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null
+          ],
+          "pieceNames": [
+            "Floating"
+          ],
+          "quantity": 1,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.01,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 100.0
+        }
+      ]
+    },
+    "results": [
+      {
+        "material": "Melamine White 18mm",
+        "sheets": [
+          {
+            "heightMm": 1220.0,
+            "placements": [
+              {
+                "finishedHeightMm": 100.0,
+                "finishedWidthMm": 100.0,
+                "heightMm": 100.0,
+                "pieceId": "Floating#1",
+                "rotated": false,
+                "widthMm": 100.0,
+                "xMm": 0.0,
+                "yMm": 0.0
+              }
+            ],
+            "sheetIndex": 0,
+            "totalAreaM2": 2.9768,
+            "usedAreaM2": 0.01,
+            "utilization": 0.0033593120128997582,
+            "widthMm": 2440.0
+          }
+        ],
+        "stockSheet": {
+          "heightMm": 1220.0,
+          "widthMm": 2440.0
+        },
+        "thicknessMm": 18.0,
+        "unplaced": []
+      }
+    ],
+    "summary": {
+      "perMaterial": [
+        {
+          "material": "Melamine White 18mm",
+          "pricePerSheet": 45.0,
+          "sheetsUsed": 1,
+          "thicknessMm": 18.0,
+          "totalAreaM2": 2.9768,
+          "totalCost": 45.0,
+          "unplacedAreaM2": 0.0,
+          "unplacedCount": 0,
+          "unplacedLabels": [],
+          "usedAreaM2": 0.01,
+          "utilization": 0.0033593120128997582,
+          "wasteAreaM2": 2.9668
+        }
+      ],
+      "totals": {
+        "sheetsUsed": 1,
+        "totalAreaM2": 2.9768,
+        "totalCost": 45.0,
+        "unplacedAreaM2": 0.0,
+        "unplacedCount": 0,
+        "usedAreaM2": 0.01,
+        "utilization": 0.0033593120128997582,
+        "wasteAreaM2": 2.9668
+      }
+    }
   },
-  "status": 401
+  "status": 200
 }

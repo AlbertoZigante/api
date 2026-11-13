@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import ConfigDict, Field
 
@@ -56,6 +56,8 @@ class BomRow(CamelModel):
     area_m2: float
     banding_length_m: float
     banding_cost: float
+    assembly_kind: Literal["box", "drawer", "group", "none"]
+    assembly_index: int | None
 
 
 class MaterialSummaryRow(CamelModel):

@@ -1,7 +1,116 @@
 {
   "body": {
-    "code": "invalid_api_key",
-    "detail": "Invalid or missing API key"
+    "bom": {
+      "materialSummary": [
+        {
+          "areaM2": 0.18,
+          "material": "Melamine White 18mm",
+          "quantity": 2,
+          "thickness": 18.0
+        }
+      ],
+      "rows": [
+        {
+          "areaM2": 0.18,
+          "assembly": "—",
+          "assemblyIndex": null,
+          "assemblyKind": "none",
+          "bandedEdges": [],
+          "bandedEdgesLabel": "—",
+          "bandingCost": 0.0,
+          "bandingLengthM": 0.0,
+          "grainInterchangeable": true,
+          "heightMm": 300.0,
+          "isHardware": false,
+          "label": "A/B",
+          "material": "Melamine White 18mm",
+          "pieceCodes": [
+            null,
+            null
+          ],
+          "pieceNames": [
+            "A",
+            "B"
+          ],
+          "quantity": 2,
+          "thicknessMm": 18.0,
+          "unitAreaM2": 0.09,
+          "unitBandingLengthM": 0.0,
+          "widthMm": 300.0
+        }
+      ]
+    },
+    "results": [
+      {
+        "material": "Melamine White 18mm",
+        "sheets": [
+          {
+            "heightMm": 1220.0,
+            "placements": [
+              {
+                "finishedHeightMm": 300.0,
+                "finishedWidthMm": 300.0,
+                "heightMm": 300.0,
+                "pieceId": "A/B#1",
+                "rotated": false,
+                "widthMm": 300.0,
+                "xMm": 0.0,
+                "yMm": 0.0
+              },
+              {
+                "finishedHeightMm": 300.0,
+                "finishedWidthMm": 300.0,
+                "heightMm": 300.0,
+                "pieceId": "A/B#2",
+                "rotated": false,
+                "widthMm": 300.0,
+                "xMm": 0.0,
+                "yMm": 303.0
+              }
+            ],
+            "sheetIndex": 0,
+            "totalAreaM2": 2.9768,
+            "usedAreaM2": 0.18,
+            "utilization": 0.060467616232195646,
+            "widthMm": 2440.0
+          }
+        ],
+        "stockSheet": {
+          "heightMm": 1220.0,
+          "widthMm": 2440.0
+        },
+        "thicknessMm": 18.0,
+        "unplaced": []
+      }
+    ],
+    "summary": {
+      "perMaterial": [
+        {
+          "material": "Melamine White 18mm",
+          "pricePerSheet": 45.0,
+          "sheetsUsed": 1,
+          "thicknessMm": 18.0,
+          "totalAreaM2": 2.9768,
+          "totalCost": 45.0,
+          "unplacedAreaM2": 0.0,
+          "unplacedCount": 0,
+          "unplacedLabels": [],
+          "usedAreaM2": 0.18,
+          "utilization": 0.060467616232195646,
+          "wasteAreaM2": 2.7967999999999997
+        }
+      ],
+      "totals": {
+        "sheetsUsed": 1,
+        "totalAreaM2": 2.9768,
+        "totalCost": 45.0,
+        "unplacedAreaM2": 0.0,
+        "unplacedCount": 0,
+        "usedAreaM2": 0.18,
+        "utilization": 0.060467616232195646,
+        "wasteAreaM2": 2.7967999999999997
+      }
+    }
   },
-  "status": 401
+  "status": 200
 }
