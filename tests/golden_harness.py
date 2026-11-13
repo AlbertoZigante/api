@@ -52,10 +52,23 @@ def deep_diff(actual: Any, expected: Any, abs_tol: float = 1e-3, path: str = "$"
     return [] if actual == expected and type(actual) is type(expected) else [f"{path}: {actual!r} != {expected!r}"]
 
 
-def assert_matches(actual: Any, expected: Any, abs_tol: float = 1e-3) -> None:
-    diffs = deep_diff(actual, expected, abs_tol)
-    assert not diffs, f"{len(diffs)} difference(s):\n  " + "\n  ".join(diffs[:10])
+# def assert_matches(actual: Any, expected: Any, abs_tol: float = 1e-3) -> None:
+#     diffs = deep_diff(actual, expected, abs_tol)
+#     assert not diffs, f"{len(diffs)} difference(s):\n  " + "\n  ".join(diffs[:10])
+# Fields the Python API ADDED on top of the frozen JS output (additive contract extension).
+ADDITIVE_KEYS = frozenset({"assemblyKind", "assemblyIndex"})
 
+def _strip_additive(x: Any) -> Any:
+    if isinstance(x, dict):
+        return {k: _strip_additive(v) for k, v in x.items() if k not in ADDITIVE_KEYS}
+    if isinstance(x, list):
+        return [_strip_additive(v) for v in x]
+    return x
+
+
+def assert_matches(actual: Any, expected: Any, abs_tol: float = 1e-3) -> None:
+    diffs = deep_diff(_strip_additive(actual), expected, abs_tol)
+    assert not diffs, f"{len(diffs)} difference(s):\n  " + "\n  ".join(diffs[:10])
 
 # ----------------------------------------------------------------------- stages
 Runner = Callable[[Any, str], Any]  # (client, design) -> actual

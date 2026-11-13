@@ -45,7 +45,7 @@ def _label_key(p: Panel) -> str | None:
     return p.group_id
 
 
-def _group_labels(panels: list[Panel]) -> dict[str, str]:
+def _group_labels(panels: list[Panel]) -> dict[str, tuple[str, str, int]]:
     labels: dict[str, tuple[str, str, int]] = {}
     box = group = drawer = 0
     for p in panels:
