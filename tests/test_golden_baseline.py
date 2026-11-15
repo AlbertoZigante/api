@@ -11,7 +11,7 @@ import pytest
 
 GOLDEN = Path(__file__).parent / "golden"
 STAGES = ["raw", "resolved", "joints", "featureJoints", "hardware", "sequence", "assembly", "panels", "bom", "nesting"]
-DESIGNS = sorted(p.name for p in GOLDEN.iterdir() if p.is_dir())
+DESIGNS = sorted(p.name for p in GOLDEN.iterdir() if p.is_dir() and (p / "panels.json").is_file())  # full designs
 
 
 def load(design: str, stage: str):
@@ -20,7 +20,8 @@ def load(design: str, stage: str):
 
 def test_manifest_matches_folders():
     manifest = load_manifest()
-    assert sorted(manifest["designs"]) == DESIGNS
+    on_disk = sorted(p.name for p in GOLDEN.iterdir() if p.is_dir())
+    assert sorted(manifest["designs"]) == on_disk
     assert len(DESIGNS) >= 20
 
 

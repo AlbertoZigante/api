@@ -5,6 +5,7 @@ a piece may only be rotated if `rotatable` (material.grainInterchangeable).
 Internals use camelCase dicts, identical to the JS shapes.
 """
 import math
+import time
 
 from ..schemas.bom import BomRow
 from ..schemas.catalog import Material
@@ -14,6 +15,23 @@ DEFAULT_KERF_MM = 3.0
 DEFAULT_EDGE_BANDING_MARGIN_MM = 1.0
 EDGE_TO_MARGIN_AXIS = {"left": "width", "right": "width", "top": "height", "bottom": "height"}
 EPS = 1e-9
+
+
+class NestingTimeout(Exception):
+    """The cooperative deadline passed before nesting finished (pure-Python CPU work cannot be killed
+    from outside a thread, so the packing loops check the clock themselves)."""
+
+
+def now() -> float:
+    """The clock deadlines are expressed in. perf_counter, NOT monotonic: on Windows time.monotonic() only ticks every
+    ~15.6 ms, so a short budget (or 0) could never be seen as exceeded by a request that finishes within one tick."""
+    return time.perf_counter()
+
+
+def _check_deadline(deadline: float | None) -> None:
+    # `>=`: a budget of exactly 0 (or a clock that did not advance) counts as expired.
+    if deadline is not None and now() >= deadline:
+        raise NestingTimeout
 
 
 def _fits_as_given(p, mw, mh):
@@ -126,7 +144,7 @@ def _summarize_sheet(s):
     }
 
 
-def nest_pieces(pieces, stock, kerf=DEFAULT_KERF_MM):
+def nest_pieces(pieces, stock, kerf=DEFAULT_KERF_MM, deadline: float | None = None):
     sw, sh = stock["widthMm"], stock["heightMm"]
     if not (sw > 0 and sh > 0):
         raise ValueError(f"stock sheet must have positive dimensions, got {stock}")
@@ -141,12 +159,14 @@ def nest_pieces(pieces, stock, kerf=DEFAULT_KERF_MM):
     unplaced: list[dict] = []
 
     for piece in ordered:
+        _check_deadline(deadline)
         if not _fits_as_given(piece, sw, sh) and not _fits_rotated(piece, sw, sh):
             unplaced.append(piece)
             continue
 
         best = None
         for sheet in sheets:
+            _check_deadline(deadline)
             for ri, rect in enumerate(sheet["freeRects"]):
                 cands = [(piece["widthMm"], piece["heightMm"], False)]
                 if piece["rotatable"]:
@@ -175,7 +195,13 @@ def nest_pieces(pieces, stock, kerf=DEFAULT_KERF_MM):
     return {"sheets": [_summarize_sheet(s) for s in sheets], "unplaced": unplaced}
 
 
-def nest_cut_list(rows: list[BomRow], catalog: list[Material], kerf_mm=None, edge_banding_margin_mm=DEFAULT_EDGE_BANDING_MARGIN_MM):
+def nest_cut_list(
+    rows: list[BomRow],
+    catalog: list[Material],
+    kerf_mm=None,
+    edge_banding_margin_mm=DEFAULT_EDGE_BANDING_MARGIN_MM,
+    deadline: float | None = None,
+):
     by_material: dict[str, list] = {}
     for row in rows:
         if row.is_hardware:
@@ -215,7 +241,7 @@ def nest_cut_list(rows: list[BomRow], catalog: list[Material], kerf_mm=None, edg
         elif entry.kerf_mm is not None and math.isfinite(entry.kerf_mm) and entry.kerf_mm >= 0:
             kerf = entry.kerf_mm
 
-        res = nest_pieces(pieces, stock, kerf)
+        res = nest_pieces(pieces, stock, kerf, deadline)
         by_id = {p["id"]: p for p in pieces}
         for sheet in res["sheets"]:
             for pl in sheet["placements"]:

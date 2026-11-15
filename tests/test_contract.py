@@ -23,6 +23,7 @@ from tests.conftest import panel
 GOLDEN = Path(__file__).parent / "golden"
 DESIGNS = sorted(p.name for p in GOLDEN.iterdir() if p.is_dir())
 ENGINE_ROUTES = ["/v1/joints", "/v1/hardware-plan", "/v1/assembly"]
+NOT_PORTED_ROUTES = ["/v1/hardware-plan", "/v1/assembly"]
 
 
 def golden(design: str, stage: str):
@@ -49,14 +50,18 @@ def test_resolved_goldens_fit_resolved_model(design):
         ResolvedPanel.model_validate(node)
 
 
-@pytest.mark.parametrize("design", DESIGNS)
-def test_engine_goldens_fit_response_models(design):
+@pytest.mark.parametrize("design", [d for d in DESIGNS if (GOLDEN / d / "joints.json").is_file()])
+def test_joints_goldens_fit_response_models(design):
     j = golden(design, "joints")
     fj = golden(design, "featureJoints")
     JointsResponse.model_validate({**j, "featureJoints": fj})
     [Joint.model_validate(x) for x in j["joints"]]
     [Collision.model_validate(x) for x in j["collisions"]]
     [FeatureJoint.model_validate(x) for x in fj]
+
+
+@pytest.mark.parametrize("design", [d for d in DESIGNS if (GOLDEN / d / "hardware.json").is_file()])
+def test_hardware_and_assembly_goldens_fit_response_models(design):
     HardwarePlanResponse.model_validate(golden(design, "hardware"))
     AssemblyResponse.model_validate(golden(design, "assembly"))
 
@@ -100,11 +105,29 @@ def test_duplicate_ids_422(client):
     assert r.status_code == 422
 
 
-def test_constraint_to_unknown_panel_422(client):
+def test_constraint_to_unknown_panel_is_a_warning_not_a_request_error(client):
     c = {"id": "c1", "type": "spansBetween", "field": "width",
-         "from": {"node": "a", "face": "front", "offset": 0}, "to": {"node": "ghost", "face": "back", "offset": 0}}
-    r = client.post("/v1/joints", json={"panels": [raw_node("a", constraints=[c])]})
-    assert r.status_code == 422
+         "from": {"node": "ghost", "face": "front", "offset": 0}, "to": {"node": "ghost", "face": "back", "offset": 0}}
+    assert client.post("/v1/joints", json={"panels": [raw_node("a", constraints=[c])]}).status_code == 200  # accepted
+    from app.services.resolve import resolve_constraints
+
+    (r,) = resolve_constraints(PanelSet.model_validate({"panels": [raw_node("a", constraints=[c])]}).panels)
+    assert r["warnings"] == ['references missing panel "ghost"']
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        {"type": "spansBetween", "field": "width"},                       # needs from + to
+        {"type": "attachedTo", "field": "positionX"},                     # needs from
+        {"type": "distance", "from": {"node": "a", "face": "top"}},       # needs field
+        {"type": "equalSpacing", "field": "positionY", "from": {"node": "a", "face": "top"}},  # needs to
+        {"type": "spansBetween", "field": "bogus", "from": {"node": "a"}, "to": {"node": "a"}},  # unknown field
+    ],
+)
+def test_incomplete_constraints_are_rejected(client, bad):
+    r = client.post("/v1/joints", json={"panels": [raw_node("a", constraints=[bad])]})
+    assert r.status_code == 422 and r.json()["code"] == "validation_error"
 
 
 def test_validation_error_does_not_echo_input(client):
@@ -132,7 +155,7 @@ def test_oversize_chunked_body_413(client):
 
 
 # ------------------------------------------------------------------ rules-chain stubs
-@pytest.mark.parametrize("path", ENGINE_ROUTES)
+@pytest.mark.parametrize("path", NOT_PORTED_ROUTES)
 def test_engine_valid_request_is_501_until_ported(client, path):
     r = client.post(path, json={"panels": [raw_node("a")]})
     assert r.status_code == 501
@@ -143,9 +166,22 @@ def test_engine_valid_request_is_501_until_ported(client, path):
 def test_client_supplied_joints_are_ignored_not_trusted(client, path):
     body = {"panels": [raw_node("a", relations=[{"kind": "joint"}])],
             "joints": [{"id": "evil"}], "hardware": [{"id": "evil"}]}
-    assert client.post(path, json=body).status_code == 501  # accepted-and-dropped, not 422
+    r = client.post(path, json=body)
+    assert r.status_code == (501 if path in NOT_PORTED_ROUTES else 200)  # accepted-and-dropped, never a 422
+    assert "evil" not in r.text, "client-supplied joints/hardware must never reach the response"
     assert "joints" not in PanelSet.model_validate(body).model_dump()
     assert not hasattr(RawPanelNode.model_validate(body["panels"][0]), "relations")
+
+
+def test_joints_endpoint_is_live_and_resolves_the_raw_graph_itself(client):
+    """Two touching panels given only as RAW nodes: the server resolves them and finds the joint."""
+    a = raw_node("a", width=400, height=400, rotation={"x": 0, "y": 0, "z": 0})
+    b = raw_node("b", width=400, height=400, rotation={"x": 0, "y": 0, "z": 0}, basePosition={"x": 0, "y": 0, "z": 18})
+    r = client.post("/v1/joints", json={"panels": [a, b]})
+    assert r.status_code == 200
+    body = r.json()
+    assert [j["type"] for j in body["joints"]] == ["face_to_face"] and body["collisions"] == [] and body["featureJoints"] == []
+    assert body["joints"][0]["id"] == "a:b:z" and (body["joints"][0]["faceA"], body["joints"][0]["faceB"]) == ("front", "back")
 
 
 # ------------------------------------------------------------------ auth + versioning

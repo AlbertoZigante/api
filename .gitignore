@@ -4,3 +4,7 @@ __pycache__/
 .env
 .pytest_cache/
 .DS_Store
+
+.hypothesis/
+.mypy_cache/
+.ruff_cache/

@@ -6,6 +6,7 @@ api.egg-info/dependency_links.txt
 api.egg-info/requires.txt
 api.egg-info/top_level.txt
 app/__init__.py
+app/concurrency.py
 app/config.py
 app/deps.py
 app/errors.py
@@ -34,7 +35,14 @@ app/services/bom.py
 app/services/nesting.py
 tests/test_api.py
 tests/test_bom.py
+tests/test_bom_units.py
+tests/test_catalog_etag.py
 tests/test_contract.py
+tests/test_golden.py
 tests/test_golden_baseline.py
+tests/test_golden_harness.py
 tests/test_nesting.py
+tests/test_nesting_edge_cases.py
+tests/test_nesting_invariants.py
+tests/test_nesting_limits.py
 tests/test_openapi_snapshot.py

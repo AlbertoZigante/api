@@ -24,8 +24,11 @@ class NotPorted(Exception):
     """Raised by the runner of a stage that has no Python implementation yet."""
 
 
-def designs() -> list[str]:
-    return sorted(p.name for p in GOLDEN.iterdir() if p.is_dir())
+def designs(having: str | None = None) -> list[str]:
+    """Golden design names; `having="joints"` keeps only those that have that golden file (resolver-only
+    designs freeze just raw + resolved)."""
+    names = sorted(p.name for p in GOLDEN.iterdir() if p.is_dir())
+    return [d for d in names if having is None or (GOLDEN / d / f"{having}.json").is_file()]
 
 
 def load(design: str, name: str) -> Any:
@@ -98,6 +101,24 @@ def _not_ported(stage: str) -> Runner:
     return run
 
 
+def _resolve(client, design: str):
+    """No endpoint: the resolver is internal (the server resolves the RAW graph itself)."""
+    from app.schemas.panels import PanelSet
+    from app.services.resolve import resolve_constraints
+
+    return resolve_constraints(PanelSet.model_validate({"panels": load(design, "raw")}).panels)
+
+
+def _joints_part(part: str) -> Runner:
+    """POST /v1/joints returns {joints, collisions, featureJoints}; each golden stage is one slice of it."""
+    def run(client, design: str):
+        r = client.post("/v1/joints", json=_raw(design))
+        assert r.status_code == 200, f"/v1/joints -> HTTP {r.status_code}: {r.text[:200]}"
+        body = r.json()
+        return body["featureJoints"] if part == "featureJoints" else {"joints": body["joints"], "collisions": body["collisions"]}
+    return run
+
+
 def _raw(design: str) -> dict:
     return {"panels": load(design, "raw")}
 
@@ -107,9 +128,9 @@ STAGES: dict[str, Stage] = {s.name: s for s in [
     Stage("bom", "4", "legacyBom", _post("/v1/bom", lambda d: {"panels": load(d, "panels")}), ported=True, abs_tol=1e-6),
     Stage("nesting", "6", "legacyNesting", _post("/v1/nesting", lambda d: {"panels": load(d, "panels"), "options": {}}), ported=True, abs_tol=1e-6),
     # --- not ported yet (flip ported=True when the phase lands)
-    Stage("resolved", "8", "resolved", _not_ported("resolved"), ported=False),
-    Stage("joints", "8", "joints", _post("/v1/joints", _raw), ported=False),
-    Stage("featureJoints", "8", "featureJoints", _not_ported("featureJoints"), ported=False),
+    Stage("resolved", "8", "resolved", _resolve, ported=True),
+    Stage("joints", "8", "joints", _joints_part("joints"), ported=True),
+    Stage("featureJoints", "8", "featureJoints", _joints_part("featureJoints"), ported=True),
     Stage("hardware", "9", "hardware", _post("/v1/hardware-plan", _raw), ported=False),
     Stage("sequence", "9", "sequence", _not_ported("sequence"), ported=False),
     Stage("assembly", "9", "assembly", _post("/v1/assembly", _raw), ported=False),

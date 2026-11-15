@@ -47,4 +47,4 @@ def test_registry_covers_every_golden_stage_file():
 
 def test_phase_assignment():
     ported = {n for n, s in STAGES.items() if s.ported}
-    assert ported == {"bom", "nesting"}
+    assert ported == {"bom", "nesting", "resolved", "joints", "featureJoints"}

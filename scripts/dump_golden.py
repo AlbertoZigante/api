@@ -75,6 +75,9 @@ def main() -> None:
             for stage in JS_STAGES + LEGACY_STAGES:
                 if (SRC / name / f"{stage}.json").is_file():
                     shutil.copyfile(SRC / name / f"{stage}.json", out / f"{stage}.json")
+            if not (SRC / name / "hardware.json").is_file():
+                print(f"ok  {name:<30} partial design (no bom, nesting, hardware or assembly reference)")
+                continue  # no bom/nesting/engine reference for deliberately odd resolver fixtures
             resolved = json.loads((SRC / name / "resolved.json").read_text(encoding="utf-8"))
             visible = [p for p in resolved if not p.get("hidden")] if isinstance(resolved, list) else []
             panels = to_payload(visible)
@@ -85,7 +88,7 @@ def main() -> None:
                 sys.exit(f"{name}: bom={bom.status_code} nesting={nest.status_code} — refusing to write baselines")
             dump(out / "bom.json", {"status": bom.status_code, "body": bom.json()})
             dump(out / "nesting.json", {"status": nest.status_code, "body": nest.json()})
-            print(f"ok  {name:<24} bom={bom.status_code} nesting={nest.status_code} panels={len(panels)}")
+            print(f"ok  {name:<30} bom={bom.status_code} nesting={nest.status_code} panels={len(panels)}")
     shutil.copyfile(SRC / "manifest.json", DST / "manifest.json")
     print(f"\n{len(designs)} designs -> {DST}")
 

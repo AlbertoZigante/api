@@ -1,12 +1,13 @@
-"""Rules-chain endpoints. CONTRACT ONLY for now: the request is fully validated
-(so clients and tests can exercise the trust boundary) and the logic answers
-501 until the Python port lands (migration phases 8-9)."""
+"""Rules-chain endpoints. /v1/joints is live (migration phase 8b); /v1/hardware-plan and /v1/assembly validate
+the request fully but answer 501 until their port lands (phase 9)."""
 from fastapi import APIRouter, Depends
 
 from ..deps import require_api_key
 from ..errors import ApiError
 from ..schemas.engine import AssemblyResponse, HardwarePlanResponse, JointsResponse
 from ..schemas.panels import PanelSet
+from ..services.joints import detect_feature_joints, detect_joints
+from ..services.resolve import resolve_constraints
 
 router = APIRouter(
     prefix="/v1",
@@ -20,9 +21,15 @@ def _not_implemented() -> ApiError:
     return ApiError(501, "not_implemented", "Endpoint contract is defined; logic not ported yet")
 
 
-@router.post("/joints", response_model=JointsResponse)
+# exclude_unset: a door hinge has no `clearanceMm` at all (only drawer slides do) — the key is absent, not null.
+@router.post("/joints", response_model=JointsResponse, response_model_exclude_unset=True)
 def joints(req: PanelSet) -> JointsResponse:
-    raise _not_implemented()
+    """RAW graph -> server-side resolve -> contact joints + collisions + door-hinge / drawer-slide joints."""
+    resolved = resolve_constraints(req.panels)
+    found = detect_joints(resolved)
+    return JointsResponse.model_validate(
+        {**found, "featureJoints": detect_feature_joints(req.panels, resolved)}
+    )
 
 
 @router.post("/hardware-plan", response_model=HardwarePlanResponse)

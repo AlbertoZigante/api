@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .catalog.loader import load_materials
+from .concurrency import SlotLimiter
 from .config import get_settings
 from .errors import ERROR_RESPONSES, install_error_handlers
 from .middleware import BodySizeLimitMiddleware, RulesVersionMiddleware
@@ -15,6 +16,7 @@ API_VERSION = "0.1.0"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.catalog = load_materials()
+    app.state.nesting_slots = SlotLimiter(get_settings().max_concurrent_nestings)
     yield
 
 

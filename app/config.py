@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173,http://localhost:4321"
     api_keys: str = ""  # empty = auth disabled
     max_body_bytes: int = 2_000_000  # request body cap (413 above)
+    nesting_timeout_s: float = 10.0  # CPU budget of one /v1/nesting call (503 nesting_timeout above)
+    max_concurrent_nestings: int = 4  # simultaneous /v1/nesting calls (503 busy above)
 
     @property
     def cors_list(self) -> list[str]:

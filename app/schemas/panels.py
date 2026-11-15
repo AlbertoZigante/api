@@ -9,7 +9,7 @@ Deliberately NOT accepted (dropped by extra="ignore"): `relations` /
 declared joints, resolved positions, UI state. Everything is validated and
 bounded: this model is the trust boundary.
 
-All lengths are millimetres.
+All lengths are millimetres; ROTATIONS ARE IN DEGREES (three.js Euler, order XYZ).
 """
 from typing import Annotated, Literal, Self
 
@@ -53,19 +53,50 @@ class Rotation3(_Model):
     z: Angle = 0
 
 
+ConstraintField = Literal["width", "height", "thickness", "positionX", "positionY", "positionZ"]
+
+
 class ConstraintEnd(_Model):
-    node: ShortStr
+    """A face reference: {node, face, offset}, or a literal snapshot {mm} (collinear tool's resize fallback)."""
+
+    node: ShortStr | None = None
     face: ShortStr | None = None
-    offset: Coord = 0
+    offset: Coord | None = None
+    mm: Coord | None = None
 
 
 class Constraint(_Model):
+    """One relation on a node (modeller: snap.js resolveConstraints). Types:
+      spansBetween  sets a dimension from two faces            (field, from, to)
+      attachedTo    pins a position to a face                  (field, myFace, from)
+      distance      a user quote: clear gap to a face          (field, myFace, from, value)
+      equalSpacing  evenly spaces a set of shelves             (field, from, to, members, spacingId)
+    An unknown `type` is accepted and reported by the resolver as a warning (like the modeller)."""
+
     id: ShortStr | None = None
     type: ShortStr
-    field: ShortStr | None = None
+    kind: ShortStr | None = None
+    field: ConstraintField | None = None
     overridden: bool = False
+    my_face: ShortStr | None = None
     from_: ConstraintEnd | None = Field(default=None, alias="from")
     to: ConstraintEnd | None = None
+    value: Coord | None = None
+    members: Annotated[list[ShortStr], Field(max_length=MAX_PANELS)] = []
+    spacing_id: ShortStr | None = None
+
+    @model_validator(mode="after")
+    def _has_what_its_type_needs(self) -> Self:
+        needs = {
+            "spansBetween": ("field", "from_", "to"),
+            "attachedTo": ("field", "from_"),
+            "distance": ("field", "from_"),
+            "equalSpacing": ("field", "from_", "to"),
+        }.get(self.type, ())
+        missing = [n.removesuffix("_") for n in needs if getattr(self, n) is None]
+        if missing:
+            raise ValueError(f"{self.type} constraint needs {', '.join(missing)}")
+        return self
 
 
 class DrawerBoxSpec(_Model):
@@ -92,7 +123,7 @@ class RawPanelNode(_Model):
     height: Dim
     thickness: Thickness
     quantity: Annotated[int, Field(ge=1, le=MAX_QUANTITY)] = 1
-    thickness_axis: Axis = "z"
+    thickness_axis: Axis | None = None  # derived from the rotation when absent (like createPanelNode)
     rotation: Rotation3 = Rotation3()
     base_position: Vec3 = Vec3()
     offset: Vec3 = Vec3()
@@ -153,36 +184,31 @@ class PanelSet(_Model):
     panels: Annotated[list[RawPanelNode], Field(max_length=MAX_PANELS)]
 
     @model_validator(mode="after")
-    def _graph_is_consistent(self) -> Self:
+    def _ids_are_unique(self) -> Self:
         ids = [p.id for p in self.panels]
         if len(set(ids)) != len(ids):
             raise ValueError("panel ids must be unique")
-        known = set(ids)
-        for p in self.panels:
-            for c in p.constraints:
-                for end in (c.from_, c.to):
-                    if end is not None and end.node not in known:
-                        raise ValueError(f"constraint on {p.id} references unknown panel")
+        # A constraint pointing at a panel that no longer exists is NOT a request error: the resolver
+        # reports it as a warning on that panel (exactly what the modeller does), so the design still resolves.
         return self
 
 
 class ResolvedPanel(_Model):
-    """Output shape of the modeller's resolveConstraints (kept for the future
-    server-side port and its golden tests; not a request body)."""
+    """Output shape of resolveConstraints (api/app/services/resolve.py == modeller snap.js)."""
 
     id: ShortStr
-    name: ShortStr
+    name: ShortStr | None = None
     material: ShortStr
-    width: Dim
-    height: Dim
-    thickness: Thickness
-    quantity: int = 1
-    thickness_axis: Axis = "z"
-    hidden: bool = False
-    group_id: ShortStr | None = None
-    position: Vec3
-    base_position: Vec3
+    quantity: int | None = None
     rotation: Rotation3
-    locked_fields: dict[str, bool] = {}
-    warnings: list[str] = []
-    resize_proxy: None = None
+    thickness_axis: Axis
+    group_id: ShortStr | None = None
+    resize_proxy: None = None  # UI-only (gizmo redirect): never sent to the server, always null here
+    hidden: bool = False
+    width: float
+    height: float
+    thickness: float
+    base_position: Vec3
+    position: Vec3
+    locked_fields: dict[str, bool]
+    warnings: list[str]

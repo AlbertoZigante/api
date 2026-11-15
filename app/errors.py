@@ -27,13 +27,19 @@ ERROR_RESPONSES: dict[int | str, dict[str, Any]] = {
     422: {"model": ErrorBody, "description": "code=validation_error"},
 }
 
+# Documented on the endpoints that can be overloaded / expensive (nesting).
+OVERLOAD_RESPONSES: dict[int | str, dict[str, Any]] = {
+    503: {"model": ErrorBody, "description": "code=busy (retry shortly, see Retry-After) | code=nesting_timeout"},
+}
+
 
 class ApiError(Exception):
-    def __init__(self, status_code: int, code: str, detail: str = "") -> None:
+    def __init__(self, status_code: int, code: str, detail: str = "", headers: dict[str, str] | None = None) -> None:
         super().__init__(detail or code)
         self.status_code = status_code
         self.code = code
         self.detail = detail or code
+        self.headers = headers
 
 
 def error_body(code: str, detail: Any) -> dict[str, Any]:
@@ -51,7 +57,7 @@ def _clean_validation_errors(errors: list[dict[str, Any]]) -> list[dict[str, Any
 def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(ApiError)
     async def _api_error(_: Request, exc: ApiError) -> JSONResponse:
-        return JSONResponse(error_body(exc.code, exc.detail), status_code=exc.status_code)
+        return JSONResponse(error_body(exc.code, exc.detail), status_code=exc.status_code, headers=exc.headers)
 
     @app.exception_handler(RequestValidationError)
     async def _validation(_: Request, exc: RequestValidationError) -> JSONResponse:

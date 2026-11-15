@@ -4,7 +4,7 @@ import pytest
 
 from tests.golden_harness import STAGES, assert_matches, designs, load
 
-CASES = [pytest.param(s, d, id=f"{s}-{d}") for s in STAGES for d in designs()]
+CASES = [pytest.param(s, d, id=f"{s}-{d}") for s in STAGES for d in designs(STAGES[s].expected)]
 
 
 @pytest.mark.parametrize("stage,design", CASES)
