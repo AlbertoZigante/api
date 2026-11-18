@@ -211,3 +211,27 @@ def detect_feature_joints(panels: list[RawPanelNode], resolved: list[dict[str, A
                 "clearanceMm": abs(box_edge - boundary_edge),
             })
     return out
+
+
+# ----------------------------------------------------------------------------- joint extremities
+def compute_joint_extremities(joint: dict[str, Any]) -> dict[str, Any]:
+    """Port of `computeJointExtremities`: a joint's seam as two endpoints plus its length. The seam runs along
+    the LONGER of the two footprint overlaps (ties go to the first axis), centred on the other one, and sits at
+    the contact plane along the contact axis."""
+    axis_a, axis_b = list(joint["overlap"])[:2]
+    overlap = joint["overlap"]
+    len_a = overlap[axis_a][1] - overlap[axis_a][0]
+    len_b = overlap[axis_b][1] - overlap[axis_b][0]
+    length_axis = axis_a if len_a >= len_b else axis_b
+    fixed_axis = axis_b if length_axis == axis_a else axis_a
+    fixed_value = (overlap[fixed_axis][0] + overlap[fixed_axis][1]) / 2
+
+    def build_point(length_value: float) -> dict[str, float]:
+        coords = {"x": 0.0, "y": 0.0, "z": 0.0}
+        coords[joint["contactAxis"]] = joint["contactPosition"]
+        coords[fixed_axis] = fixed_value
+        coords[length_axis] = length_value
+        return coords
+
+    p1, p2 = build_point(overlap[length_axis][0]), build_point(overlap[length_axis][1])
+    return {"p1": p1, "p2": p2, "lengthMm": math.dist((p1["x"], p1["y"], p1["z"]), (p2["x"], p2["y"], p2["z"]))}

@@ -6,5 +6,5 @@ in the `X-Rules-Version` header and by `GET /v1/version`, so cached results
 can be invalidated.
 """
 
-RULES_VERSION = "0.1.0"
+RULES_VERSION = "0.4.0"
 CONTRACT_VERSION = "1"  # bump on any breaking change of request/response schemas

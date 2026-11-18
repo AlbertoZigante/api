@@ -16,8 +16,17 @@ snap.js/resolveConstraints, joints, clearance, validator, quotes, spacing, assem
 
 ## Rules chain (in progress — see migration plan)
 - Phase 1–2 done: error envelope, limits, `/v1/version`, `X-Rules-Version`, `openapi.json` contract, TS types in the modeller.
-- `POST /v1/joints | /v1/hardware-plan | /v1/assembly` accept the RAW panel graph; `/v1/joints` is live (phase 8b), the other two
-  answer **501** until phase 9. Response models are frozen from the JS goldens (`app/schemas/engine.py`).
+- `POST /v1/joints | /v1/hardware-plan | /v1/assembly` accept the RAW panel graph; `/v1/joints` (8b), `/v1/hardware-plan` (9a) and
+  `/v1/assembly` (9b) are all live. Response models are frozen from the JS goldens (`app/schemas/engine.py`).
 - Phase 8a done: `resolveConstraints` is ported (`app/services/resolve.py`, see `docs/RESOLVER.md`): the server resolves the RAW graph itself.
 - Phase 8b done: `POST /v1/joints` is live (`app/services/joints.py`, see `docs/JOINTS.md`).
-  Next: hardware selection + assembly sequencing/ergonomics (phase 9) — `/v1/hardware-plan` and `/v1/assembly` still answer 501.
+- Phase 9a done: `POST /v1/hardware-plan` is live (`app/rules/hardware.py` + `app/services/hardware.py`, see `docs/HARDWARE.md`);
+  `RULES_VERSION` is 0.2.0.
+- Phase 9b done: `POST /v1/assembly` is live (`app/rules/assembly/`, see `docs/ASSEMBLY.md`); `RULES_VERSION` is 0.3.0.
+  Wording is the LEGACY prose, byte for byte; structured verbs + warning codes come with phase 10 (client i18n).
+- Phase 10 done (server): structured wording on every step (verb + params, warning / tool codes, component and
+  sub-assembly references), `RULES_VERSION` 0.4.0; goldens unchanged (new keys are additive). Client side: see the modeller's
+  VERSIONS.md (RENDER module en / fr / it, `VITE_USE_API_HARDWARE` / `VITE_USE_API_ASSEMBLY`).
+- Phase 11 done: API key + per-user JWT, slowapi rate limits (61st request/minute -> 429), structured logs + request ids,
+  nesting in worker processes; see `docs/SECURITY.md`. Client: `setAuthTokenProvider`, `Retry-After`, new error codes (fr / it).
+  Next: phase 12 — remove the JS business logic from the client (only after phases 5-10 have run stably with the flags on).

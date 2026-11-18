@@ -23,7 +23,7 @@ Docs: http://localhost:8000/docs
 | POST | `/v1/nesting` | `{panels, options}` → `{bom, results, summary}` |
 | GET | `/v1/version` | `{apiVersion, rulesVersion, contractVersion}` |
 | POST | `/v1/joints` | RAW `{panels}` → joints + collisions + feature joints (door hinges, drawer slides) — see `docs/JOINTS.md` |
-| POST | `/v1/hardware-plan` | RAW `{panels}` → hinges / runners / fasteners (**501: contract only**) |
+| POST | `/v1/hardware-plan` | RAW `{panels}` → hinges / runners / fasteners + `unmatched` — see `docs/HARDWARE.md` |
 | POST | `/v1/assembly` | RAW `{panels}` → ordered steps + clusters + tools (**501: contract only**) |
 
 Every response carries `X-Rules-Version`. Errors are always `{"code": "<stable>", "detail": ...}`
@@ -50,10 +50,23 @@ in `docs/RESOLVER.md`.
 `app/services/joints.py` ports `detectJoints` / `detectFeatureJoints`; `POST /v1/joints` resolves the RAW graph itself and
 returns contact joints, collisions and door-hinge / drawer-slide joints. Scope, thresholds and verification: `docs/JOINTS.md`.
 
+## Security
+API key and / or per-user JWT, rate limits, structured logs, nesting in worker processes: `docs/SECURITY.md`.
+`ENV=production` refuses to start without auth configured.
+
+## Assembly plan
+`app/rules/assembly/` ports `engine/assembly/*` + `engine/ergonomics.js`; `POST /v1/assembly` resolves, detects joints,
+plans hardware and returns ordered `steps`, `clusters`, `toolsSummary` — see `docs/ASSEMBLY.md`.
+
+## Hardware plan
+`app/rules/hardware.py` (catalogs + selectors) and `app/services/hardware.py` (orchestration) port `engine/hardware.js`;
+`POST /v1/hardware-plan` resolves the RAW graph and computes the joints itself. Rules, boundaries and verification:
+`docs/HARDWARE.md`.
+
 ## Golden fixtures + parity with the original JS engine
 `tests/test_golden.py` runs every (stage x design) of the frozen goldens (`tests/golden_harness.py`):
 BOM and nesting must equal the ORIGINAL JS engine's output (`legacyBom/legacyNesting.json`, produced by the modeller's
-`npm run golden:legacy` from the pre-migration code). Stages not ported yet (joints, hardware, assembly, resolve) are
+`npm run golden:legacy` from the pre-migration code). Stages not ported yet (sequence, assembly) are
 strict xfails: when a port starts passing, flip `ported=True` in the harness. The run prints a per-stage report.
 
 Nesting guard rails (`NESTING_TIMEOUT_S`, `MAX_CONCURRENT_NESTINGS` -> `503 nesting_timeout` / `503 busy`), the

@@ -59,7 +59,12 @@ def deep_diff(actual: Any, expected: Any, abs_tol: float = 1e-3, path: str = "$"
 #     diffs = deep_diff(actual, expected, abs_tol)
 #     assert not diffs, f"{len(diffs)} difference(s):\n  " + "\n  ".join(diffs[:10])
 # Fields the Python API ADDED on top of the frozen JS output (additive contract extension).
-ADDITIVE_KEYS = frozenset({"assemblyKind", "assemblyIndex"})
+ADDITIVE_KEYS = frozenset({
+    "assemblyKind", "assemblyIndex",
+    # phase 10: structured wording added to the assembly steps / clusters / plan (the JS has only prose)
+    "order", "verb", "instructionVerb", "params", "warningCodes", "hardwareIds", "toolCodes", "toolNoteCodes",
+    "component", "subassemblyRef", "completionRef", "ordinal", "toolsSummaryCodes",
+})
 
 def _strip_additive(x: Any) -> Any:
     if isinstance(x, dict):
@@ -109,6 +114,18 @@ def _resolve(client, design: str):
     return resolve_constraints(PanelSet.model_validate({"panels": load(design, "raw")}).panels)
 
 
+def _sequence(client, design: str):
+    """No endpoint for the bare sequence (steps without tools / ergonomics): call the planner directly."""
+    from app.rules.assembly import build_assembly_sequence
+    from app.schemas.panels import PanelSet
+    from app.services.resolve import resolve_constraints
+
+    panels = PanelSet.model_validate(_raw(design)).panels
+    seq = build_assembly_sequence(panels, resolve_constraints(panels))
+    seq.pop("_resolved_by_id")
+    return seq
+
+
 def _joints_part(part: str) -> Runner:
     """POST /v1/joints returns {joints, collisions, featureJoints}; each golden stage is one slice of it."""
     def run(client, design: str):
@@ -131,7 +148,7 @@ STAGES: dict[str, Stage] = {s.name: s for s in [
     Stage("resolved", "8", "resolved", _resolve, ported=True),
     Stage("joints", "8", "joints", _joints_part("joints"), ported=True),
     Stage("featureJoints", "8", "featureJoints", _joints_part("featureJoints"), ported=True),
-    Stage("hardware", "9", "hardware", _post("/v1/hardware-plan", _raw), ported=False),
-    Stage("sequence", "9", "sequence", _not_ported("sequence"), ported=False),
-    Stage("assembly", "9", "assembly", _post("/v1/assembly", _raw), ported=False),
+    Stage("hardware", "9", "hardware", _post("/v1/hardware-plan", _raw), ported=True),
+    Stage("sequence", "9", "sequence", _sequence, ported=True),
+    Stage("assembly", "9", "assembly", _post("/v1/assembly", _raw), ported=True),
 ]}

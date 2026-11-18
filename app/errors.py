@@ -3,6 +3,7 @@
 The modeller's client reads `code` (e.g. 'invalid_api_key') and translates it;
 `detail` is for humans/logs and is never echoed back with client input.
 """
+import logging
 from typing import Any
 
 from fastapi import FastAPI, Request
@@ -11,6 +12,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from .logs import log_event
 from .schemas.base import CamelModel
 
 
@@ -22,9 +24,13 @@ class ErrorBody(CamelModel):
 
 
 ERROR_RESPONSES: dict[int | str, dict[str, Any]] = {
-    401: {"model": ErrorBody, "description": "code=invalid_api_key"},
+    401: {
+        "model": ErrorBody,
+        "description": "code=invalid_api_key | code=unauthorized | code=invalid_token | code=token_expired",
+    },
     413: {"model": ErrorBody, "description": "code=payload_too_large"},
     422: {"model": ErrorBody, "description": "code=validation_error"},
+    429: {"model": ErrorBody, "description": "code=rate_limited (wait Retry-After seconds)"},
 }
 
 # Documented on the endpoints that can be overloaded / expensive (nesting).
@@ -63,6 +69,15 @@ def install_error_handlers(app: FastAPI) -> None:
     async def _validation(_: Request, exc: RequestValidationError) -> JSONResponse:
         detail = _clean_validation_errors(jsonable_encoder(exc.errors()))
         return JSONResponse(error_body("validation_error", detail), status_code=422)
+
+    @app.exception_handler(Exception)
+    async def _unhandled(request: Request, exc: Exception) -> JSONResponse:
+        # Generic body: never leak internals. The stack goes to the structured log with the request id.
+        rid = getattr(request.state, "request_id", None)
+        log_event("unhandled_error", logging.ERROR, exc_info=exc, requestId=rid, path=request.url.path)
+        # this handler runs OUTSIDE the access-log middleware, so the id header is added here
+        return JSONResponse(error_body("internal_error", "Internal server error"), status_code=500,
+                            headers={"X-Request-ID": rid} if rid else None)
 
     @app.exception_handler(StarletteHTTPException)
     async def _http(_: Request, exc: StarletteHTTPException) -> JSONResponse:

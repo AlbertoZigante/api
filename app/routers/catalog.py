@@ -5,10 +5,12 @@ from fastapi import APIRouter, Depends, Request, Response
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from ..deps import get_catalog, require_api_key
+from ..auth import require_auth
+from ..deps import get_catalog
+from ..ratelimit import rate_limit
 from ..schemas.catalog import Material
 
-router = APIRouter(prefix="/v1/catalog", tags=["catalog"], dependencies=[Depends(require_api_key)])
+router = APIRouter(prefix="/v1/catalog", tags=["catalog"], dependencies=[Depends(require_auth), Depends(rate_limit)])
 
 # `no-cache` = the browser may store it but MUST revalidate (If-None-Match -> 304) every time:
 # cheap for a ~1 kB catalog, and a catalog change shows up on the very next request.

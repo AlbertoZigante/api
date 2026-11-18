@@ -1,18 +1,20 @@
-"""Rules-chain endpoints. /v1/joints is live (migration phase 8b); /v1/hardware-plan and /v1/assembly validate
-the request fully but answer 501 until their port lands (phase 9)."""
+"""Rules-chain endpoints: /v1/joints (phase 8b), /v1/hardware-plan (9a), /v1/assembly (9b)."""
 from fastapi import APIRouter, Depends
 
-from ..deps import require_api_key
+from ..auth import require_auth
 from ..errors import ApiError
+from ..ratelimit import rate_limit
+from ..rules.assembly import build_assembly_plan
 from ..schemas.engine import AssemblyResponse, HardwarePlanResponse, JointsResponse
 from ..schemas.panels import PanelSet
+from ..services.hardware import build_hardware_plan
 from ..services.joints import detect_feature_joints, detect_joints
 from ..services.resolve import resolve_constraints
 
 router = APIRouter(
     prefix="/v1",
     tags=["rules-chain"],
-    dependencies=[Depends(require_api_key)],
+    dependencies=[Depends(require_auth), Depends(rate_limit)],
     responses={501: {"description": "Not implemented yet (contract only)"}},
 )
 
@@ -32,11 +34,15 @@ def joints(req: PanelSet) -> JointsResponse:
     )
 
 
-@router.post("/hardware-plan", response_model=HardwarePlanResponse)
+# exclude_unset: only fastener `unmatched` entries carry jointId/jointType (absent on hinge/runner entries).
+@router.post("/hardware-plan", response_model=HardwarePlanResponse, response_model_exclude_unset=True)
 def hardware_plan(req: PanelSet) -> HardwarePlanResponse:
-    raise _not_implemented()
+    """RAW graph -> server-side resolve -> joints (server-computed) -> hinges, runners, fasteners + unmatched."""
+    return HardwarePlanResponse.model_validate(build_hardware_plan(req.panels, resolve_constraints(req.panels)))
 
 
-@router.post("/assembly", response_model=AssemblyResponse)
+# exclude_unset: optional step fields (jointObjects, repeatHardware, completionInstruction...) are absent, not null.
+@router.post("/assembly", response_model=AssemblyResponse, response_model_exclude_unset=True)
 def assembly(req: PanelSet) -> AssemblyResponse:
-    raise _not_implemented()
+    """RAW graph -> server-side resolve -> joints -> hardware -> ordered steps + clusters + tools."""
+    return AssemblyResponse.model_validate(build_assembly_plan(req.panels, resolve_constraints(req.panels)))

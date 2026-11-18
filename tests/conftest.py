@@ -7,6 +7,14 @@ from fastapi.testclient import TestClient
 # request would answer 401. Env vars beat .env in pydantic-settings, so force auth OFF before the app
 # is imported; the tests that exercise auth enable it explicitly (dependency_overrides).
 os.environ["API_KEYS"] = ""
+os.environ["JWT_SECRET"] = ""
+os.environ["JWT_PUBLIC_KEY"] = ""
+os.environ["ENV"] = "development"
+# a few hundred requests per test run from one client: the real limits are exercised by tests/test_rate_limit.py
+os.environ["NESTING_EXECUTOR"] = "thread"  # worker processes are covered by tests/test_nesting_runner.py
+os.environ["RATE_LIMIT"] = "100000/minute"
+os.environ["RATE_LIMIT_HEAVY"] = "100000/minute"
+os.environ["AUTH_FAIL_LIMIT"] = "100000/minute"
 
 from app.catalog.loader import load_materials  # noqa: E402
 from app.main import app  # noqa: E402
@@ -20,9 +28,11 @@ def catalog():
 @pytest.fixture()
 def client(monkeypatch):
     from app.config import get_settings
+    from app.ratelimit import reset_limits
 
     monkeypatch.setenv("API_KEYS", "")
     get_settings.cache_clear()
+    reset_limits()
     with TestClient(app) as c:
         yield c
 

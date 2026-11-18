@@ -137,7 +137,7 @@ def test_python_joints_match_the_js_joints_on_random_layouts():
         panels = PanelSet.model_validate({"panels": graph}).panels
         resolved = resolve_constraints(panels)
         actual = {"resolved": resolved, "joints": detect_joints(resolved), "featureJoints": detect_feature_joints(panels, resolved)}
-        diffs = deep_diff(actual, expected["ok"], abs_tol=1e-6)
+        diffs = deep_diff(actual, {k: v for k, v in expected["ok"].items() if k not in ("hardware", "sequence", "assembly")}, abs_tol=1e-6)  # their own tests
         if diffs:
             kinds.update(re.sub(r"\[\d+\]", "[]", d.split(":")[0]) for d in diffs)
             problems.append(f"graph {i}: {diffs[0]}   (+{len(diffs) - 1} more)\n{json.dumps(graph)[:700]}")

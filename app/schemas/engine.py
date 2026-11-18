@@ -135,10 +135,52 @@ class HardwarePlanResponse(_Out):
 
 
 # ---------------------------------------------------------------- assembly
+# Structured wording (phase 10): the client renders `verb` + `params` (and the codes below) in the user's language
+# instead of showing the legacy English prose. These Literals ARE the contract: the OpenAPI enums are scanned by the
+# modeller's tests, which fail if a code has no translation in every locale.
+StepVerb = Literal[
+    "prepare_hardware", "fit_guide_box_left", "fit_guide_box_right", "mount_guide_shelf", "mount_guide_panel",
+    "start_door", "start_drawer", "start_plinth", "start_subassembly", "set_aside", "place_loose",
+    "attach_to", "attach_plain", "install_closure_back", "install_closure_top",
+    "fit_handle_door", "fit_handle_drawer_front", "fit_plinth", "fit_plinth_to", "slide_drawer", "hang_door",
+    "install_back", "install_top", "install_vertical", "install_horizontal",
+    "drawer_attach_left", "drawer_attach_right", "drawer_attach_back", "drawer_attach_bottom",
+    "identify_unattached",
+]
+WarningCode = Literal[
+    "door_build_flat", "door_support_hinges", "drawer_complete_box", "vertical_before_top", "horizontal_before_back",
+    "back_after_internals", "top_after_internals", "keep_panel_separate", "handle_fit_flat",
+]
+ToolCode = Literal["screwdriver_pz2", "drill_bit_pilot_4_5", "drill_bit_clearance_7", "bit_pozidriv_pz3"]
+ToolNoteCode = Literal["concealed_hinge", "drawer_runner_wood_screw", "confirmat_screw"]
+ComponentKind = Literal["door", "drawer", "drawers", "plinth", "guides", "carcass", "integration"]
+ClusterRole = Literal["door", "drawer_box", "drawer_front", "plinth", "carcass"]
+
+
+class StepComponent(_Out):
+    """Structured twin of componentTitle / componentSubtitle."""
+    kind: ComponentKind
+    ordinal: int | None = None      # door / plinth: its number when there are several
+    number: int | None = None       # a single drawer
+    count: int | None = None        # identical drawers built together
+    numbers: list[int] | None = None
+
+
+class SubassemblyRef(_Out):
+    """Structured twin of subassemblyName: a cluster (role + ordinal), drawer(s), or a generic fallback."""
+    role: ClusterRole | None = None
+    ordinal: int | None = None
+    drawer: int | None = None
+    drawers: list[int] | None = None
+    count: int | None = None
+    fallback: Literal["door", "drawer"] | None = None
+
+
 class AssemblyCluster(_Out):
     id: str
     name: str
-    role: str
+    role: ClusterRole
+    ordinal: int
     panel_ids: list[str]
 
 
@@ -162,13 +204,13 @@ class AssemblyStep(_Out):
     joint_ids: list[str]
     joint_objects: list[dict[str, Any]] | None = None
     prerequisite_step_ids: list[str]
-    subassembly_id: str
-    subassembly_name: str
+    subassembly_id: str | None = None  # null for a step whose panel belongs to no cluster (e.g. a hidden panel)
+    subassembly_name: str | None = None
     subassembly_complete: bool
     integration_subassembly_ids: list[str] | None = None
-    cluster_kind: str
+    cluster_kind: str | None = None
     component_kind: str
-    component_title: str
+    component_title: str | None = None
     component_subtitle: str | None = None
     repeat_count: int
     repeat_labels: list[str] | None = None
@@ -178,7 +220,19 @@ class AssemblyStep(_Out):
     tool_notes: list[str]
     ergonomic: dict[str, float]
     ergonomics: dict[str, Any]
-    # --- legacy prose (to be replaced by verb + warningCodes, see module note)
+    # --- structured wording (render these in the user's language) ---
+    order: int
+    verb: StepVerb
+    instruction_verb: StepVerb
+    params: dict[str, Any]
+    warning_codes: list[WarningCode]
+    hardware_ids: list[str]
+    tool_codes: list[ToolCode]
+    tool_note_codes: list[ToolNoteCode]
+    component: StepComponent | None = None
+    subassembly_ref: SubassemblyRef | None = None
+    completion_ref: SubassemblyRef | None = None
+    # --- legacy English prose (kept for the JS path and as a fallback; same content as the codes above) ---
     description: str
     instruction: str
     orientation_instruction: str
@@ -190,3 +244,4 @@ class AssemblyResponse(_Out):
     steps: list[AssemblyStep]
     clusters: list[AssemblyCluster]
     tools_summary: list[str]
+    tools_summary_codes: list[ToolCode]

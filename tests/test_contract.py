@@ -23,7 +23,7 @@ from tests.conftest import panel
 GOLDEN = Path(__file__).parent / "golden"
 DESIGNS = sorted(p.name for p in GOLDEN.iterdir() if p.is_dir())
 ENGINE_ROUTES = ["/v1/joints", "/v1/hardware-plan", "/v1/assembly"]
-NOT_PORTED_ROUTES = ["/v1/hardware-plan", "/v1/assembly"]
+NOT_PORTED_ROUTES: list[str] = []  # every engine route is live since phase 9b
 
 
 def golden(design: str, stage: str):
@@ -61,9 +61,13 @@ def test_joints_goldens_fit_response_models(design):
 
 
 @pytest.mark.parametrize("design", [d for d in DESIGNS if (GOLDEN / d / "hardware.json").is_file()])
-def test_hardware_and_assembly_goldens_fit_response_models(design):
+def test_hardware_golden_and_live_assembly_fit_response_models(client, design):
     HardwarePlanResponse.model_validate(golden(design, "hardware"))
-    AssemblyResponse.model_validate(golden(design, "assembly"))
+    # the assembly golden is the frozen LEGACY JS output (prose only); the contract now also requires the structured
+    # wording (phase 10), so the model is checked against the live response, which must also pass its own response_model
+    r = client.post("/v1/assembly", json={"panels": golden(design, "raw")})
+    assert r.status_code == 200
+    AssemblyResponse.model_validate(r.json())
 
 
 # ------------------------------------------------------------------ limits & hostile input
@@ -154,14 +158,7 @@ def test_oversize_chunked_body_413(client):
     assert r.status_code == 413
 
 
-# ------------------------------------------------------------------ rules-chain stubs
-@pytest.mark.parametrize("path", NOT_PORTED_ROUTES)
-def test_engine_valid_request_is_501_until_ported(client, path):
-    r = client.post(path, json={"panels": [raw_node("a")]})
-    assert r.status_code == 501
-    assert r.json()["code"] == "not_implemented"
-
-
+# ------------------------------------------------------------------ rules-chain
 @pytest.mark.parametrize("path", ENGINE_ROUTES)
 def test_client_supplied_joints_are_ignored_not_trusted(client, path):
     body = {"panels": [raw_node("a", relations=[{"kind": "joint"}])],

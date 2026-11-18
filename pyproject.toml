@@ -7,6 +7,8 @@ dependencies = [
   "fastapi>=0.115",
   "uvicorn[standard]>=0.30",
   "pydantic-settings>=2.4",
+  "PyJWT[crypto]>=2.8",   # per-user auth: verify bearer tokens (app/auth.py)
+  "slowapi>=0.1.9",       # rate limiting: limiter, storage and window strategy (app/ratelimit.py)
 ]
 
 [project.optional-dependencies]
@@ -30,6 +32,7 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Header"]  # FastAPI depend
 [tool.ruff.lint.per-file-ignores]
 "app/services/*" = ["E501"]  # direct ports of the JS engine: keep lines comparable to the original
 "tests/*" = ["E501"]  # long literal fixtures / one-line assertions
+"app/rules/assembly/*" = ["E501"]  # step wording: one long literal per sentence, split strings would hurt more
 
 [tool.mypy]
 python_version = "3.11"

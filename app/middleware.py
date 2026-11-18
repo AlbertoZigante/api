@@ -1,9 +1,14 @@
 """Pure-ASGI middlewares (no BaseHTTPMiddleware: it would buffer request bodies)."""
 import json
+import logging
+import re
+import time
+import uuid
 
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from .errors import error_body
+from .logs import log_event
 from .rules import RULES_VERSION
 
 
@@ -81,3 +86,46 @@ class RulesVersionMiddleware:
             await send(message)
 
         await self.app(scope, receive, send_with_header)
+
+
+_REQUEST_ID = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
+
+
+class AccessLogMiddleware:
+    """Request id (accepted from X-Request-ID when well-formed, else generated; echoed on the response) + ONE
+    structured log line per request: method, path (no query string), status, duration, client, caller identity,
+    auth error code. Never bodies, never credentials."""
+
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        incoming = dict(scope["headers"]).get(b"x-request-id", b"").decode("latin-1")
+        request_id = incoming if _REQUEST_ID.match(incoming) else uuid.uuid4().hex
+        scope.setdefault("state", {})["request_id"] = request_id
+        started = time.perf_counter()
+        status = 500
+
+        async def send_with_id(message: Message) -> None:
+            nonlocal status
+            if message["type"] == "http.response.start":
+                status = message["status"]
+                message = {**message, "headers": [*message.get("headers", []), (b"x-request-id", request_id.encode())]}
+            await send(message)
+
+        try:
+            await self.app(scope, receive, send_with_id)
+        finally:
+            state = scope.get("state", {})
+            principal = state.get("principal")
+            client = scope.get("client")
+            log_event(
+                "request",
+                logging.ERROR if status >= 500 else logging.WARNING if status in (401, 429) else logging.INFO,
+                requestId=request_id, method=scope["method"], path=scope["path"], status=status,
+                ms=round((time.perf_counter() - started) * 1000, 1), client=client[0] if client else None,
+                caller=principal.label if principal else None, authError=state.get("auth_error"),
+            )
