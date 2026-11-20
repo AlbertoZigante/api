@@ -15,7 +15,7 @@ from app.rules.assembly.ergonomics import TOOL_CATALOG, TOOL_CODES
 from app.rules.assembly.human import WARNING_CODES, WARNING_TEXT, orientation_instruction, subassembly_label
 from app.schemas.engine import ComponentKind, StepVerb, ToolCode, ToolNoteCode, WarningCode
 from tests.golden_harness import designs, load
-from tests.test_assembly_differential import cabinet_layout
+from tests.layouts import cabinet_layout
 from tests.test_assembly_unit import full_cabinet
 
 JOIN = ", ".join
@@ -197,10 +197,11 @@ def test_modeller_step_fixtures_are_in_sync(client):
     """3d_modeler/fixtures/api-steps is the API's own output for every golden design (scripts/export_steps_fixtures.py);
     the modeller's i18n tests render it. A planner change without re-exporting would test stale data."""
     import json
+    import os
+    from pathlib import Path
 
-    from tests.test_joints_differential import MODELLER
-
-    folder = MODELLER / "fixtures" / "api-steps"
+    modeller = Path(os.environ.get("MODELLER_DIR", Path(__file__).resolve().parents[2] / "3d_modeler"))
+    folder = modeller / "fixtures" / "api-steps"
     if not folder.is_dir():
         pytest.skip("modeller repo not found (MODELLER_DIR)")
     for name in designs("assembly"):

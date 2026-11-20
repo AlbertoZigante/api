@@ -43,12 +43,15 @@ JSON is camelCase on the wire (same field names as the modeller).
 
 ## Constraint resolver
 `app/services/resolve.py` ports the modeller's `resolveConstraints` (the server resolves the RAW graph itself). Scope,
-failure handling, deliberate differences and how it is verified (goldens + differential fuzz against the real JS) are
+failure handling, deliberate differences and how it is verified (goldens + the frozen 703-design JS corpus) are
 in `docs/RESOLVER.md`.
 
 ## Joint detection
 `app/services/joints.py` ports `detectJoints` / `detectFeatureJoints`; `POST /v1/joints` resolves the RAW graph itself and
 returns contact joints, collisions and door-hinge / drawer-slide joints. Scope, thresholds and verification: `docs/JOINTS.md`.
+
+## Architecture
+Who does what, code layout, how it is tested, how to change a rule: `docs/ARCHITECTURE.md`. Migration record: `docs/MIGRATION.md`.
 
 ## Security
 API key and / or per-user JWT, rate limits, structured logs, nesting in worker processes: `docs/SECURITY.md`.
@@ -73,23 +76,20 @@ Nesting guard rails (`NESTING_TIMEOUT_S`, `MAX_CONCURRENT_NESTINGS` -> `503 nest
 decision to keep the guillotine port instead of rectpack, and the invariant tests are in `docs/NESTING.md`.
 
 `GET /v1/catalog/materials` sends an `ETag` + `Cache-Control: no-cache`; `If-None-Match` -> 304.
-`tests/golden/<design>/` = frozen output of the original JS engine (from `3d_modeler/fixtures/golden`) + BOM/nesting
-baselines. Refresh with `python scripts/dump_golden.py ..\3d_modeler\fixtures\golden`.
+`tests/golden/<design>/` = frozen output of the original JS engine (the contract the Python rules must keep) + BOM/nesting baselines;
+`tests/golden/corpus.jsonl.gz` = 703 more designs. Intentional rule change: `python scripts/update_golden.py` (see `docs/ARCHITECTURE.md`).
 
 ## Structure
 ```
-app/main.py            app factory, CORS, lifespan (loads catalog once)
-app/config.py          env settings
-app/deps.py            catalog + optional X-API-Key auth
-app/routers/           health, catalog, bom, nesting
-app/services/          bom.py, nesting.py  (ports of engine/bom.js, engine/nesting.js)
-app/schemas/           pydantic models (panels.py = raw request, engine.py = rules-chain responses, limits.py)
-app/rules/             RULES_VERSION / CONTRACT_VERSION (rules themselves land here in phases 8-9)
-app/errors.py          error envelope + handlers
-app/middleware.py      body-size limit (413), X-Rules-Version header
-scripts/               dump_golden.py, export_openapi.py
-app/catalog/           loader.py + data/materials.csv
-tests/                 pytest (nesting verified identical to the JS reference)
+app/main.py auth.py ratelimit.py logs.py middleware.py errors.py config.py deps.py nesting_runner.py   app factory + cross-cutting
+app/routers/           health, meta, catalog, bom, nesting, engine (joints, hardware-plan, assembly)
+app/services/          bom, nesting, resolve, geometry, joints, hardware  (pure logic, no FastAPI)
+app/rules/             hardware.py, assembly/, collation.py, js.py; RULES_VERSION / CONTRACT_VERSION
+app/schemas/           pydantic models = the contract
+app/catalog/           loader + data/materials.csv
+scripts/               export_openapi, export_steps_fixtures, update_golden, loadtest, issue_token
+tests/                 goldens, frozen corpus, unit, contract, security, runtime (docs/ARCHITECTURE.md)
+docs/                  ARCHITECTURE MIGRATION SECURITY RESOLVER JOINTS HARDWARE ASSEMBLY NESTING
 Dockerfile             container deploy (reads $PORT)
 ```
 

@@ -50,7 +50,6 @@ The rules version is in `X-Rules-Version` and `GET /v1/version`.
 1. Goldens: stages `sequence` and `assembly`, 20 designs each.
 2. `tests/test_assembly_unit.py`: required stage order, carcass closure order, plan invariants (every golden + a full
    cabinet), determinism, trust boundary, repeat counts, helpers.
-3. `tests/test_assembly_differential.py` vs the REAL JS (node + `npm ci` in `3d_modeler`): cabinets with doors, drawers
-   (identical and not), plinth (touching or not), mixed-case piece codes, loose panels; random layouts; `localeCompare`
-   vs node's ICU. `FUZZ_N=3000` for a long run. The long run found the `sum()` rounding difference above.
+3. **Frozen JS corpus (`tests/test_golden_corpus.py`, `tests/golden/corpus.jsonl.gz`): 703 designs and what the original JS engine answered for each — random layouts at every joint-tolerance boundary, furniture with drawers / doors, cabinets, constraint graphs. It replaced the live JS-vs-Python differential fuzz of the migration (the JS was deleted in phase 12; see docs/ARCHITECTURE.md). `tests/test_collation.py` replays 2500 `localeCompare` results frozen from node's ICU.**
+
 4. Mutation-tested (order flips, comparator flips, weights, thresholds, collation, fallbacks).

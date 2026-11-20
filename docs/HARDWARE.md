@@ -24,8 +24,6 @@ Anything that matches nothing is reported in `unmatched` (`kind` hinge / runner 
 ## Verification
 1. Goldens (`tests/test_golden.py`, stage `hardware`): 20 designs, JS output frozen in `tests/golden/*/hardware.json`.
 2. `tests/test_hardware_unit.py`: every catalog boundary, placement maths, `unmatched` bookkeeping, determinism, trust boundary.
-3. `tests/test_hardware_differential.py` against the REAL JS (needs node + `npm ci` in `3d_modeler`):
-   selector fuzz at every boundary (`scripts/golden/hardware-runner.mjs`), plus whole-plan fuzz on random layouts and on
-   furniture layouts (carcass + drawers at random gap / thickness / depth + doors) so TANDEM, LEGRABOX and every
-   `unmatched` kind are reached. `FUZZ_N=3000` for a long run.
+3. **Frozen JS corpus (`tests/test_golden_corpus.py`, `tests/golden/corpus.jsonl.gz`): 703 designs and what the original JS engine answered for each — random layouts at every joint-tolerance boundary, furniture with drawers / doors, cabinets, constraint graphs. It replaced the live JS-vs-Python differential fuzz of the migration (the JS was deleted in phase 12; see docs/ARCHITECTURE.md).** The selector boundaries (thickness 15.99 / 16 / 24 / 24.01, clearance 20 / 21 / 22 / 22.01, nominal lengths, seam lengths) are covered by `tests/test_hardware_unit.py`.
+
 4. Mutation-tested: boundary flips (`<=` → `<`, ceil → floor, tolerance, clamp, thickness range) are all caught.

@@ -13,7 +13,7 @@ from app.rules.collation import locale_compare
 from app.schemas.panels import PanelSet
 from app.services.resolve import resolve_constraints
 from tests.golden_harness import designs, load
-from tests.test_assembly_differential import cabinet_layout
+from tests.layouts import cabinet_layout
 
 STAGE_ORDER = ["doors", "drawers", "guides", "plinth", "carcass", "integration"]
 

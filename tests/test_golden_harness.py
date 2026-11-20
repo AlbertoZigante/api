@@ -45,6 +45,5 @@ def test_registry_covers_every_golden_stage_file():
     assert {s.expected for s in STAGES.values()} <= on_disk
 
 
-def test_phase_assignment():
-    ported = {n for n, s in STAGES.items() if s.ported}
-    assert ported == {"bom", "nesting", "resolved", "joints", "featureJoints", "hardware", "sequence", "assembly"}
+def test_every_stage_of_the_pipeline_is_registered():
+    assert set(STAGES) == {"bom", "nesting", "resolved", "joints", "featureJoints", "hardware", "sequence", "assembly"}

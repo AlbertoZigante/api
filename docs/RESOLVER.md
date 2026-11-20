@@ -32,11 +32,8 @@ contract and is always `null` in the output. `thicknessAxis`, when absent, is de
 1. **Goldens** (`tests/test_golden.py`, stage `resolved`): 32 frozen JS results — the 20 furniture designs plus 12
    resolver fixtures built with the real feature functions or by hand (each constraint type, every failure
    warning, cycles, JS-style rounding of `30.5`, literal anchors, 3-axis rotations, ordering).
-2. **Differential fuzz** (`tests/test_resolve_differential.py`): random graphs go through the REAL JS resolver
-   (`3d_modeler/scripts/golden/resolve-runner.mjs`) and through the port; every number, flag and warning text must
-   agree (1e-6). Needs `node` and the modeller checkout next to this repo (or `MODELLER_DIR`); skipped otherwise.
-   `FUZZ_N=20000 FUZZ_SEED=7 pytest tests/test_resolve_differential.py` for a long run. Mutation-tested: a flipped
-   sign, a wrong tolerance, a reordered constraint, a dropped lock... each fails the goldens and/or the fuzz.
+2. **Frozen JS corpus (`tests/test_golden_corpus.py`, `tests/golden/corpus.jsonl.gz`): 703 designs and what the original JS engine answered for each — random layouts at every joint-tolerance boundary, furniture with drawers / doors, cabinets, constraint graphs. It replaced the live JS-vs-Python differential fuzz of the migration (the JS was deleted in phase 12; see docs/ARCHITECTURE.md).**
+
 3. **Unit/robustness** (`tests/test_resolve_unit.py`): geometry, ordering, cycles, purity, determinism, never raises.
 
 One known, accepted gap: an explicit JSON `null` node/face prints as `null` in the JS warning text and as

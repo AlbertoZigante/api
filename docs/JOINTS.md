@@ -30,9 +30,4 @@ The client keeps its own copy of detection for live snapping/UX; this is the ser
 1. Goldens (`tests/test_golden.py`, stages `joints` + `featureJoints`): the 20 furniture designs plus 4 hand-placed
    fixtures aimed at every threshold and branch (`joints_thresholds`, `joints_corner_vs_t`, `joints_edge_to_edge`,
    `joints_features_synthetic`).
-2. Differential fuzz (`tests/test_joints_differential.py`): random layouts placed exactly at/just inside/just outside
-   each threshold, plus random door/drawer flags with missing, wrong and dangling references, through the REAL JS
-   (`3d_modeler/scripts/golden/engine-runner.mjs`) and the port. All 5 joint types, collisions, hinges and slides are
-   reached. Mutation-tested: 17 deliberate bugs (every threshold, tie-break, sign, side, guard, filter...) — every one
-   that changes behaviour is caught by the goldens and/or the fuzz; the two survivors are equivalent mutants (a tie
-   between two valid contact axes cannot happen, `{}` vs `null` boundary ids behave the same).
+2. **Frozen JS corpus (`tests/test_golden_corpus.py`, `tests/golden/corpus.jsonl.gz`): 703 designs and what the original JS engine answered for each — random layouts at every joint-tolerance boundary, furniture with drawers / doors, cabinets, constraint graphs. It replaced the live JS-vs-Python differential fuzz of the migration (the JS was deleted in phase 12; see docs/ARCHITECTURE.md).**

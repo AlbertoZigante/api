@@ -9,7 +9,7 @@ import pytest
 from app.schemas.panels import PanelSet, Rotation3
 from app.services.geometry import get_aligned_axis
 from app.services.resolve import js_round, resolve_constraints
-from tests.test_resolve_differential import random_graph
+from tests.layouts import random_graph
 
 
 def rot(x=0, y=0, z=0):

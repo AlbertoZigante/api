@@ -1,12 +1,9 @@
-"""Golden-test harness (migration phase 3).
+"""Golden-test harness.
 
-One registry says, per stage of the pipeline, how to compute the API's answer for a
-design and which frozen file is the reference. A stage whose port has not landed yet is
-registered as `ported=False` and runs as a STRICT xfail: it is reported as "not ported",
-and the moment the port starts passing pytest FAILS (XPASS strict) until the stage is
-flipped to `ported=True` here — so the harness can never silently lag behind the code.
-
-To un-skip a stage in a later phase:  flip `ported=True` (and point `run` at the service).
+One registry (STAGES) says, per stage of the pipeline, how to compute the API's answer for a design and which frozen
+file (tests/golden/<design>/<stage>.json) is the reference. The files are what the ORIGINAL JS engine answered, frozen
+during the migration; they are the contract the Python rules must keep. Changing a rule on purpose = bump RULES_VERSION,
+run `python scripts/update_golden.py`, review the diff.
 """
 from __future__ import annotations
 
@@ -18,10 +15,6 @@ from pathlib import Path
 from typing import Any
 
 GOLDEN = Path(__file__).parent / "golden"
-
-
-class NotPorted(Exception):
-    """Raised by the runner of a stage that has no Python implementation yet."""
 
 
 def designs(having: str | None = None) -> list[str]:
@@ -85,10 +78,8 @@ Runner = Callable[[Any, str], Any]  # (client, design) -> actual
 @dataclass(frozen=True)
 class Stage:
     name: str
-    phase: str            # migration phase that ports it
     expected: str         # golden file the answer is compared to
     run: Runner
-    ported: bool
     abs_tol: float = 1e-3
 
 
@@ -97,12 +88,6 @@ def _post(path: str, body_of: Callable[[str], dict]) -> Runner:
         r = client.post(path, json=body_of(design))
         assert r.status_code == 200, f"{path} -> HTTP {r.status_code}: {r.text[:200]}"
         return r.json()
-    return run
-
-
-def _not_ported(stage: str) -> Runner:
-    def run(client, design: str):
-        raise NotPorted(stage)
     return run
 
 
@@ -141,14 +126,12 @@ def _raw(design: str) -> dict:
 
 
 STAGES: dict[str, Stage] = {s.name: s for s in [
-    # --- ported
-    Stage("bom", "4", "legacyBom", _post("/v1/bom", lambda d: {"panels": load(d, "panels")}), ported=True, abs_tol=1e-6),
-    Stage("nesting", "6", "legacyNesting", _post("/v1/nesting", lambda d: {"panels": load(d, "panels"), "options": {}}), ported=True, abs_tol=1e-6),
-    # --- not ported yet (flip ported=True when the phase lands)
-    Stage("resolved", "8", "resolved", _resolve, ported=True),
-    Stage("joints", "8", "joints", _joints_part("joints"), ported=True),
-    Stage("featureJoints", "8", "featureJoints", _joints_part("featureJoints"), ported=True),
-    Stage("hardware", "9", "hardware", _post("/v1/hardware-plan", _raw), ported=True),
-    Stage("sequence", "9", "sequence", _sequence, ported=True),
-    Stage("assembly", "9", "assembly", _post("/v1/assembly", _raw), ported=True),
+    Stage("bom", "legacyBom", _post("/v1/bom", lambda d: {"panels": load(d, "panels")}), abs_tol=1e-6),
+    Stage("nesting", "legacyNesting", _post("/v1/nesting", lambda d: {"panels": load(d, "panels"), "options": {}}), abs_tol=1e-6),
+    Stage("resolved", "resolved", _resolve),
+    Stage("joints", "joints", _joints_part("joints")),
+    Stage("featureJoints", "featureJoints", _joints_part("featureJoints")),
+    Stage("hardware", "hardware", _post("/v1/hardware-plan", _raw)),
+    Stage("sequence", "sequence", _sequence),
+    Stage("assembly", "assembly", _post("/v1/assembly", _raw)),
 ]}

@@ -47,15 +47,12 @@ _stage_counts: dict[str, dict[str, int]] = {}
 
 
 def pytest_runtest_logreport(report):
-    """Collects pass / not-ported / fail counts per golden stage (test ids look like `bom-box_plain`)."""
+    """Collects pass / fail counts per golden stage (test ids look like `bom-box_plain`)."""
     if "test_stage_matches_golden[" not in report.nodeid:
         return
     if report.when == "call" or (report.when == "setup" and report.skipped):
         stage = report.nodeid.split("[", 1)[1].split("-", 1)[0]
-        if hasattr(report, "wasxfail"):
-            outcome = "not ported"
-        else:
-            outcome = {"passed": "passed", "failed": "FAILED", "skipped": "skipped"}[report.outcome]
+        outcome = {"passed": "passed", "failed": "FAILED", "skipped": "skipped"}[report.outcome]
         _stage_counts.setdefault(stage, {}).setdefault(outcome, 0)
         _stage_counts[stage][outcome] += 1
 
@@ -63,6 +60,6 @@ def pytest_runtest_logreport(report):
 def pytest_terminal_summary(terminalreporter):
     if not _stage_counts:
         return
-    terminalreporter.section("golden stages (JS reference vs Python)")
+    terminalreporter.section("golden stages (frozen reference vs API)")
     for stage, counts in _stage_counts.items():
         terminalreporter.write_line(f"{stage:<14} " + "  ".join(f"{k}: {v}" for k, v in counts.items()))
