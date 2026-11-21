@@ -45,10 +45,8 @@ def _label_key(p: Panel) -> str | None:
     return p.group_id
 
 
-def _group_labels(panels: list[Panel]) -> dict[str, tuple[str, int, str]]:
-    """key -> (kind, index, English label). The label stays English and stable
-    (it feeds sorting and nesting ids); kind/index let clients translate it."""
-    labels: dict[str, tuple[str, int, str]] = {}
+def _group_labels(panels: list[Panel]) -> dict[str, tuple[str, str, int]]:
+    labels: dict[str, tuple[str, str, int]] = {}
     box = group = drawer = 0
     for p in panels:
         key = _label_key(p)
@@ -56,13 +54,13 @@ def _group_labels(panels: list[Panel]) -> dict[str, tuple[str, int, str]]:
             continue
         if p.is_drawer_front or p.is_drawer_box_panel:
             drawer += 1
-            labels[key] = ("drawer", drawer, f"Drawer {drawer}")
+            labels[key] = (f"Drawer {drawer}", "drawer", drawer)
         elif p.is_box_panel:
             box += 1
-            labels[key] = ("box", box, f"Box {box}")
+            labels[key] = (f"Box {box}", "box", box)
         else:
             group += 1
-            labels[key] = ("group", group, f"Group {group}")
+            labels[key] = (f"Group {group}", "group", group)
     return labels
 
 
@@ -75,7 +73,10 @@ def compute_bom(panels: list[Panel], catalog: list[Material]) -> list[BomRow]:
     rows: dict[str, dict] = {}
 
     for p in panels:
-        kind, index, assembly = ("none", None, "—") if not p.group_id else labels.get(_label_key(p), ("group", None, "Group"))
+        if not p.group_id:
+            assembly, kind, index = "—", "none", None
+        else:
+            assembly, kind, index = labels.get(_label_key(p) or "", ("Group", "group", None))
         key = f"{assembly}::{_footprint_key(catalog, p)}"
         name = _display_name(p)
         row = rows.get(key)

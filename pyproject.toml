@@ -7,11 +7,37 @@ dependencies = [
   "fastapi>=0.115",
   "uvicorn[standard]>=0.30",
   "pydantic-settings>=2.4",
+  "PyJWT[crypto]>=2.8",   # per-user auth: verify bearer tokens (app/auth.py)
+  "slowapi>=0.1.9",       # rate limiting: limiter, storage and window strategy (app/ratelimit.py)
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "httpx>=0.27"]
+dev = ["pytest>=8", "httpx>=0.27", "ruff>=0.6", "mypy>=1.11", "hypothesis>=6.100"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["tests/golden"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Header"]  # FastAPI dependency-injection idiom
+
+[tool.ruff.lint.per-file-ignores]
+"app/services/*" = ["E501"]  # direct ports of the JS engine: keep lines comparable to the original
+"tests/*" = ["E501"]  # long literal fixtures / one-line assertions
+"app/rules/assembly/*" = ["E501"]  # step wording: one long literal per sentence, split strings would hurt more
+
+[tool.mypy]
+python_version = "3.11"
+plugins = ["pydantic.mypy"]
+files = ["app", "scripts"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+check_untyped_defs = true

@@ -1,0 +1,247 @@
+{
+  "body": {
+    "materialSummary": [
+      {
+        "areaM2": 2.7248303899999997,
+        "material": "Melamine White 18mm",
+        "quantity": 20,
+        "thickness": 18.0
+      }
+    ],
+    "rows": [
+      {
+        "areaM2": 0.368,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 736.0,
+        "isHardware": false,
+        "label": "Group 1 — Back",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Back"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.368,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 500.0
+      },
+      {
+        "areaM2": 0.19999999999999998,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 400.0,
+        "isHardware": false,
+        "label": "Group 1 — Bottom",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Bottom"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.19999999999999998,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 500.0
+      },
+      {
+        "areaM2": 0.5599999999999999,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 700.0,
+        "isHardware": false,
+        "label": "Group 1 — Left/Right",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null,
+          null
+        ],
+        "pieceNames": [
+          "Left",
+          "Right"
+        ],
+        "quantity": 2,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.27999999999999997,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 400.0
+      },
+      {
+        "areaM2": 0.209,
+        "assembly": "Group 1",
+        "assemblyIndex": 1,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 418.0,
+        "isHardware": false,
+        "label": "Group 1 — Top",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null
+        ],
+        "pieceNames": [
+          "Top"
+        ],
+        "quantity": 1,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.209,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 500.0
+      },
+      {
+        "areaM2": 0.20303561399999998,
+        "assembly": "Group 2",
+        "assemblyIndex": 2,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 175.333,
+        "isHardware": false,
+        "label": "Group 2 — Drawer Back",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null,
+          null,
+          null
+        ],
+        "pieceNames": [
+          "Drawer Back",
+          "Drawer Back",
+          "Drawer Back"
+        ],
+        "quantity": 3,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.067678538,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 386.0
+      },
+      {
+        "areaM2": 0.419196,
+        "assembly": "Group 2",
+        "assemblyIndex": 2,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 362.0,
+        "isHardware": false,
+        "label": "Group 2 — Drawer Bottom",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null,
+          null,
+          null
+        ],
+        "pieceNames": [
+          "Drawer Bottom",
+          "Drawer Bottom",
+          "Drawer Bottom"
+        ],
+        "quantity": 3,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.139732,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 386.0
+      },
+      {
+        "areaM2": 0.324799536,
+        "assembly": "Group 2",
+        "assemblyIndex": 2,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 233.333,
+        "isHardware": false,
+        "label": "Group 2 — Drawer Front 1/Drawer Front 2/Drawer Front 3",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null,
+          null,
+          null
+        ],
+        "pieceNames": [
+          "Drawer Front 1",
+          "Drawer Front 2",
+          "Drawer Front 3"
+        ],
+        "quantity": 3,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.108266512,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 464.0
+      },
+      {
+        "areaM2": 0.44079924,
+        "assembly": "Group 2",
+        "assemblyIndex": 2,
+        "assemblyKind": "group",
+        "bandedEdges": [],
+        "bandedEdgesLabel": "—",
+        "bandingCost": 0.0,
+        "bandingLengthM": 0.0,
+        "grainInterchangeable": true,
+        "heightMm": 193.333,
+        "isHardware": false,
+        "label": "Group 2 — Drawer Left/Drawer Right",
+        "material": "Melamine White 18mm",
+        "pieceCodes": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "pieceNames": [
+          "Drawer Left",
+          "Drawer Right",
+          "Drawer Left",
+          "Drawer Right",
+          "Drawer Left",
+          "Drawer Right"
+        ],
+        "quantity": 6,
+        "thicknessMm": 18.0,
+        "unitAreaM2": 0.07346654,
+        "unitBandingLengthM": 0.0,
+        "widthMm": 380.0
+      }
+    ]
+  },
+  "status": 200
+}

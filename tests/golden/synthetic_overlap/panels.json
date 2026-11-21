@@ -1,0 +1,38 @@
+[
+  {
+    "bandedEdges": [],
+    "boxGroupId": null,
+    "groupId": null,
+    "height": 300,
+    "id": "panel-1",
+    "isBoxPanel": false,
+    "isDoor": false,
+    "isDrawerBoxPanel": false,
+    "isDrawerFront": false,
+    "isLeg": false,
+    "isPlinthPanel": false,
+    "material": "Melamine White 18mm",
+    "name": "A",
+    "pieceCode": null,
+    "thickness": 18,
+    "width": 300
+  },
+  {
+    "bandedEdges": [],
+    "boxGroupId": null,
+    "groupId": null,
+    "height": 300,
+    "id": "panel-2",
+    "isBoxPanel": false,
+    "isDoor": false,
+    "isDrawerBoxPanel": false,
+    "isDrawerFront": false,
+    "isLeg": false,
+    "isPlinthPanel": false,
+    "material": "Melamine White 18mm",
+    "name": "B",
+    "pieceCode": null,
+    "thickness": 18,
+    "width": 300
+  }
+]

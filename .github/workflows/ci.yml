@@ -6,6 +6,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "3.12" }
+        with: { python-version: "3.12", cache: pip }
       - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: mypy
+      - run: python scripts/export_openapi.py --check   # contract snapshot must be committed
       - run: pytest
+      # 11: heavy nesting traffic must not starve /health (starts its own uvicorn, ~15 s)
+      - run: python scripts/loadtest.py --seconds 10 --health-p95-ms 400 --health-max-ms 3000

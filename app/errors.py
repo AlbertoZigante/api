@@ -1,35 +1,85 @@
-"""Locale-neutral errors.
+"""One error envelope for the whole API: {"code": <stable machine code>, "detail": ...}.
 
-Every error body carries a stable machine `code` next to the English `detail`.
-Clients (site, modeller) translate by `code`; the API itself never localises.
+The modeller's client reads `code` (e.g. 'invalid_api_key') and translates it;
+`detail` is for humans/logs and is never echoed back with client input.
 """
-from fastapi import FastAPI, HTTPException, Request
+import logging
+from typing import Any
+
+from fastapi import FastAPI, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+from .logs import log_event
+from .schemas.base import CamelModel
 
 
-class ApiError(HTTPException):
-    def __init__(self, status_code: int, code: str, detail: str):
-        super().__init__(status_code=status_code, detail=detail)
+class ErrorBody(CamelModel):
+    """Error envelope documented in the OpenAPI contract (what clients actually receive)."""
+
+    code: str
+    detail: Any
+
+
+ERROR_RESPONSES: dict[int | str, dict[str, Any]] = {
+    401: {
+        "model": ErrorBody,
+        "description": "code=invalid_api_key | code=unauthorized | code=invalid_token | code=token_expired",
+    },
+    413: {"model": ErrorBody, "description": "code=payload_too_large"},
+    422: {"model": ErrorBody, "description": "code=validation_error"},
+    429: {"model": ErrorBody, "description": "code=rate_limited (wait Retry-After seconds)"},
+}
+
+# Documented on the endpoints that can be overloaded / expensive (nesting).
+OVERLOAD_RESPONSES: dict[int | str, dict[str, Any]] = {
+    503: {"model": ErrorBody, "description": "code=busy (retry shortly, see Retry-After) | code=nesting_timeout"},
+}
+
+
+class ApiError(Exception):
+    def __init__(self, status_code: int, code: str, detail: str = "", headers: dict[str, str] | None = None) -> None:
+        super().__init__(detail or code)
+        self.status_code = status_code
         self.code = code
+        self.detail = detail or code
+        self.headers = headers
+
+
+def error_body(code: str, detail: Any) -> dict[str, Any]:
+    return {"code": code, "detail": detail}
+
+
+def _clean_validation_errors(errors: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    # Drop `input`/`ctx`: they can echo large or hostile client data.
+    return [
+        {"loc": [str(p) for p in e.get("loc", ())], "msg": e.get("msg", ""), "type": e.get("type", "")}
+        for e in errors[:50]
+    ]
 
 
 def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(ApiError)
-    async def _api_error(_: Request, exc: ApiError):
-        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail, "code": exc.code})
+    async def _api_error(_: Request, exc: ApiError) -> JSONResponse:
+        return JSONResponse(error_body(exc.code, exc.detail), status_code=exc.status_code, headers=exc.headers)
 
     @app.exception_handler(RequestValidationError)
-    async def _validation_error(_: Request, exc: RequestValidationError):
-        # `detail` keeps FastAPI's default shape (list of problems).
-        return JSONResponse(status_code=422, content={"detail": jsonable(exc.errors()), "code": "validation_error"})
+    async def _validation(_: Request, exc: RequestValidationError) -> JSONResponse:
+        detail = _clean_validation_errors(jsonable_encoder(exc.errors()))
+        return JSONResponse(error_body("validation_error", detail), status_code=422)
 
-    @app.exception_handler(ValueError)
-    async def _value_error(_: Request, exc: ValueError):
-        return JSONResponse(status_code=422, content={"detail": str(exc), "code": "invalid_input"})
+    @app.exception_handler(Exception)
+    async def _unhandled(request: Request, exc: Exception) -> JSONResponse:
+        # Generic body: never leak internals. The stack goes to the structured log with the request id.
+        rid = getattr(request.state, "request_id", None)
+        log_event("unhandled_error", logging.ERROR, exc_info=exc, requestId=rid, path=request.url.path)
+        # this handler runs OUTSIDE the access-log middleware, so the id header is added here
+        return JSONResponse(error_body("internal_error", "Internal server error"), status_code=500,
+                            headers={"X-Request-ID": rid} if rid else None)
 
-
-def jsonable(errors):
-    from fastapi.encoders import jsonable_encoder
-
-    return jsonable_encoder(errors)
+    @app.exception_handler(StarletteHTTPException)
+    async def _http(_: Request, exc: StarletteHTTPException) -> JSONResponse:
+        code = {404: "not_found", 405: "method_not_allowed"}.get(exc.status_code, "http_error")
+        return JSONResponse(error_body(code, exc.detail), status_code=exc.status_code, headers=exc.headers)

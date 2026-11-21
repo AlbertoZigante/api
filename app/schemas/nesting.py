@@ -1,14 +1,19 @@
+from typing import Annotated
+
+from pydantic import Field
+
 from .base import CamelModel
-from .bom import BomResponse, BomRow, Panel
+from .bom import BomResponse, Panel
+from .limits import MAX_PANELS
 
 
 class NestingOptions(CamelModel):
-    kerf_mm: float | None = None
-    edge_banding_margin_mm: float = 1
+    kerf_mm: Annotated[float, Field(ge=0, le=20)] | None = None
+    edge_banding_margin_mm: Annotated[float, Field(ge=0, le=20)] = 1
 
 
 class NestingRequest(CamelModel):
-    panels: list[Panel]
+    panels: Annotated[list[Panel], Field(max_length=MAX_PANELS)]
     options: NestingOptions = NestingOptions()
 
 
